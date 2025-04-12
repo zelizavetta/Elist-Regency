@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Главная страница{% endblock %}
+
+{% block head %}
+    <!-- Подключаем CSS для главной страницы -->
+    <link rel="stylesheet" href="{% static 'css/title_page.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullPage.js/3.1.2/fullpage.min.css">
+{% endblock %}
+{% block content %}
+  <!-- Контейнер для fullPage.js -->
+  <div id="fullpage">
+      <div class="section" id="section1">
+        {% include "header.html" %}
+      </div>
+      <div class="section" id="section2">
+          {% include "booking.html" %}
+      </div>
+      <div class="section" id="section3">
+          <h1>Страница 3</h1>
+          <p>Содержимое третьей страницы</p>
+      </div>
+  </div>
+
+  <!-- Подключаем JavaScript fullPage.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fullPage.js/3.1.2/fullpage.min.js"></script>
+  <script>
+    // Инициализация fullPage.js
+    new fullpage('#fullpage', {
+      autoScrolling: true,
+      scrollHorizontally: false,
+    });
+  </script>
+{% endblock %}

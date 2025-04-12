@@ -1,0 +1,29 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Мой сайт{% endblock %}</title>
+    <!-- Блок для дополнительных стилей -->
+    {% block head %}
+    <!-- Здесь можно подключить CSS и другие ресурсы -->
+    {% endblock %}
+    <style>
+        iframe {
+            display: none;
+        }          
+    </style>
+</head>
+<body>
+    <!-- Основной контент, специфичный для каждой страницы -->
+    <main>
+        {% block content %}
+        <!-- Контент страницы -->
+        {% endblock %}
+    </main>
+
+    <!-- Подключаем footer -->
+    {% include "footer.html" %}
+</body>
+</html>
+

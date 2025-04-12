@@ -1,0 +1,49 @@
+.booking-form {
+    width: 800px;
+    height: 80px;
+    background-color: #EEAD77;
+    display: flex;
+    flex-direction: row;
+    /* justify-content: space-between; */
+    align-items: center;
+    gap: 0;
+    border-radius: 4px;
+}
+
+.booking-group-in {
+    margin-left: 64px;
+}
+
+.booking-group-out {
+    margin-left: 32px;
+}
+
+.booking-bttn {
+    margin-right: 64px;
+    margin-left: auto;
+    border-radius: 8px;
+    border: 0;
+    color: #6E5139;
+    font-weight: bold;
+    background-color: white;
+    font-size: 12px;
+    width: 160px;
+    height: 32px;
+}
+
+.about {
+    display: flex;
+    flex-direction: column;
+    gap: 64px;
+}
+
+.photo {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+}
+
+.photo img {
+    width: 400px;
+    height: 300px;
+}
