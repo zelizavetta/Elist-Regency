@@ -1,0 +1,66 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title%}{%endblock%}</title>
+    <link rel="stylesheet" href="{% static 'css/account.css'%}">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+</head>
+
+<body>
+    {% include "header.html" %}
+    <div class="account" style="display: flex; flex-direction:column; margin-top: 80px; padding: 40px;">
+        <div style="display: flex; flex-direction: row; justify-content:space-between; align-items: center;">
+            <p>
+                Здравствуйте, <b>{{ name }}</b>
+            </p>
+            <a href="{% url 'usersettings' %}">
+                <img style="margin-bottom: 8px;" src="{% static 'img/settings.svg' %}" />
+            </a>
+        </div>
+        {% include "booking.html" %}
+        <div style="display: flex; flex-direction: row; margin-top: 48px; justify-content:space-between;">
+            <div style="display: flex; flex-direction: column;">
+                <div style="margin: 0; font-size: 16px; font-weight: 600;">
+                    Текущее бронирование
+                </div>
+                <div class="room">
+                    <img src="{% static 'img/room2.jpg' %}" />
+                    <div class="description">
+                        <p>
+                            Дата:
+                        </p>
+                        <p>
+                            Стоимость:
+                        </p>
+                        <p>
+                            Тип номера:
+                        </p>
+                        <p>
+                            Гости:
+                        </p>
+                        <button class="cancle-bttn">
+                            Отменить бронирование
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="services">
+                <p>
+                    Заказать услугу
+                </p>
+                <nav>
+                    <ul>
+                      <li><a href="{% url 'rooms' %}">Клининг номера</a></li>
+                      <li><a href="{% url 'restaurant' %}">Еда и напитки в номер</a></li>
+                    </ul>
+                  </nav>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

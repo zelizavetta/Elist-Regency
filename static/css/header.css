@@ -11,19 +11,34 @@ html, body {
     display: flex;
     flex-direction: row;
     align-items: center;      /* Выравнивание по вертикали */
-    height: 96px;
+    height: 72px;
     width: 100%;
     justify-content: space-between;
     z-index: 100 !important;
 
 }
 
-.account {
-    margin-left: 32px !important;
+.account-bttn {
+    margin-left: 40px !important;
 }
 
 .menu {
-    margin-right: 32px !important;
+    margin-right: 40px !important;
+}
+
+.menu button {
+    background-color: inherit;
+    color: white;
+    border: 0;
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    padding: 0;
+    align-items: center;
+}
+
+.menu button p {
+    margin: 0;
 }
 
 .title {
@@ -33,3 +48,48 @@ html, body {
     color: white;
     text-align: center;
 }
+
+.menu-bar {
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: black;
+    width: 200px;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    right: 0;
+    transition: right 0.3s ease; 
+    visibility: hidden;
+}
+
+.menu-bar.active {
+    visibility: visible;
+}
+
+.menu-bar a {
+    color: white;
+    text-transform: uppercase;
+    font-size: 14px;
+    font-weight: 400;
+    text-decoration: none;
+}
+
+.menu-bar nav {
+    margin: 0;
+    margin-top: 120px;
+    margin-right: 32px;
+    text-align: end;
+}
+
+.menu-bar nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.menu-bar a:hover {
+    color: white;
+    text-decoration: none;
+}
+  

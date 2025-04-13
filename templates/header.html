@@ -13,18 +13,40 @@
 
 <body>
     <div class="header">
-        <div class="account">
-            <img src="{% static 'img/account_icon.svg'%}"/>
-        </div>
+        <a href="{% url 'enter' %}">
+            <div class="account-bttn">
+                <img src="{% static 'img/account_icon.svg'%}"/>
+            </div>
+        </a>
         <div class="title">
             <p style="margin: 0;">Elist Regency</p>
         </div>
         <div class="menu" style="display: flex; flex-direction:row; gap: 16px; height:100%; align-items:center;">
-            <p style="font-size: 16px; color: white; margin: 0;">
-                МЕНЮ
-            </p>
-            <img src="{% static 'img/menu_icon.svg'%}"/>
+            <button onclick="toggleMenu()">
+                <p style="font-size: 16px; color: white; margin: 0;">
+                    МЕНЮ
+                </p>
+                <img src="{% static 'img/menu_icon.svg'%}"/>
+            </button>
         </div>
     </div>
+
+    <div class="menu-bar" id="menu-bar">
+        <nav>
+            <ul>
+              <li><a href="{% url 'rooms' %}">проживание</a></li>
+              <li><a href="{% url 'restaurant' %}">рестораны и бары</a></li>
+              <li><a href="{% url 'fitness' %}">фитнес и бассейн</a></li>
+              <li><a href="{% url 'events' %}">мероприятия</a></li>
+            </ul>
+          </nav>
+    </div>
+
+    <script>
+        function toggleMenu() {
+          var sidebar = document.getElementById('menu-bar');
+          sidebar.classList.toggle('active');
+        }
+    </script>      
 </body>
 </html>

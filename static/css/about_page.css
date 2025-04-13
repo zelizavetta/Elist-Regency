@@ -1,0 +1,51 @@
+.about {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    margin-top: 64px;
+}
+
+.about p {
+    font-size: 40px;
+}
+
+.photo {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    gap: 32px;
+}
+
+.photo img {
+    width: 600px;
+    height: 500px;
+    border-radius: 4px;
+}
+
+#inside-photo:hover {
+    filter: brightness(60%); 
+}
+
+.image-wrapper {
+    position: relative; /* Относительное позиционирование для корректного позиционирования абсолютного элемента внутри */
+    display: inline-block; /* Можно заменить на block, если требуется */
+}
+
+.image-wrapper .overlay {
+    position: absolute;
+    top: 50%;  /* Центрируем по вертикали */
+    left: 50%; /* Центрируем по горизонтали */
+    transform: translate(-50%, -50%); /* Точное центрирование по центру изображения */
+    color: #fff; /* Цвет шрифта */
+    text-align: center;
+    font-size: 32px;
+    letter-spacing: 4px;
+
+    opacity: 0;
+    transition: opacity 0.3s ease; /* Плавное появление */
+}
+
+.image-wrapper:hover .overlay {
+    opacity: 1;
+}

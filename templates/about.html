@@ -1,0 +1,31 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title%}{%endblock%}</title>
+    <link rel="stylesheet" href="{% static 'css/about_page.css'%}">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+</head>
+
+<body>
+    {% include "booking.html" %}
+    <div class="about">
+        <p>
+          О нас
+        </p>
+        <div class="photo">
+          <img id="main-photo" src="{% static 'img/hotel_main_photo.jpg'%}" />
+          <div class="image-wrapper">
+            <img id="inside-photo" src="{% static 'img/hotel_inside_photo.jpg'%}">
+            <div class="overlay">
+              Галерея
+            </div>
+          </div>
+        </div>
+      </div>
+</body>
+</html>
