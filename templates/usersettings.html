@@ -11,28 +11,13 @@
 </head>
 
 <body>
-    <form method="post">
-        {% csrf_token %}
-        <div class="user-form">
-          <div class="name">
-            <label for="name">{{ form.name.label }}</label>
-            <div>
-              {{ form.name }}
-            </div>
-          </div>
-          <div class="phone">
-            <label for="phone">{{ form.phone.label }}</label>
-            <div>
-              {{ form.phone }}
-            </div>
-          </div>
-          <div class="email">
-            <label for="email">{{ form.email.label }}</label>
-            <div>
-              {{ form.email }}
-            </div>
-          </div>
-    </form>
+  <h1>Настройки личного кабинета</h1>
+  <form method="post">
+      {% csrf_token %}
+      <input type="hidden" name="form_type" value="profile" />
+      {{ form.as_p }}
+      <button type="submit">Сохранить изменения</button>
+  </form>
     <form method="post" action="{% url 'logout' %}">
       {% csrf_token %}
       <button type="submit">Выйти</button>

@@ -4,13 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <title>Вход</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
     <h1>Вход</h1>
     <form method="post">
         {% csrf_token %}
-        {{ form.as_p }}
+        <input type="hidden" name="form_type" value="profile">
+        {{ profile_form.as_p }}
         <button type="submit">Войти</button>
     </form>
     <p>Нет аккаунта? <a href="{% url 'register' %}">Зарегистрируйтесь</a></p>

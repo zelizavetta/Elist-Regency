@@ -1,18 +1,18 @@
+<!-- user_form.html -->
 {% load static %}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Регистрация</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <title>Регистрация пользователя</title>
 </head>
 <body>
     <h1>Регистрация</h1>
     <form method="post">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Зарегистрироваться</button>
+        <input type="hidden" name="form_type" value="profile">
+        {{ profile_form.as_p }}
+        <button type="submit">Отправить</button>
     </form>
-    <p>Уже зарегистрированы? <a href="{% url 'login' %}">Войдите</a></p>
 </body>
 </html>

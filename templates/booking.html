@@ -14,30 +14,31 @@
 <body>
   <form method="post">
     {% csrf_token %}
+    <input type="hidden" name="form_type" value="booking" />
     <div class="booking-form">
       <div class="booking-group-in">
-        <label for="id_check_in">{{ form.check_in.label }}</label>
+        <label for="id_check_in">{{ booking_form.check_in.label }}</label>
         <div>
-          {{ form.check_in }}
+          {{ booking_form.check_in }}
         </div>
       </div>
       <div class="booking-group-out">
-        <label for="id_check_out">{{ form.check_out.label }}</label>
+        <label for="id_check_out">{{ booking_form.check_out.label }}</label>
         <div>
-          {{ form.check_out }}
+          {{ booking_form.check_out }}
         </div>
       </div>
   <div class="guest-field">
     <label>Гости</label>
     <div class="guest-display" id="guest-display">
-      Взрослые: <span id="guest-count">{{ form.guests.value|default:"1" }}</span>,
-      Дети: <span id="children-count">{{ form.children.value|default:"0" }}</span>
+      Взрослые: <span id="guest-count">{{ booking_form.guests.value|default:"1" }}</span>,
+      Дети: <span id="children-count">{{ booking_form.children.value|default:"0" }}</span>
     </div>
   </div>
   <!-- {{ form.check_in }}
   {{ form.check_out }} -->
-  {{ form.guests }}
-  {{ form.children }}
+  {{ booking_form.guests }}
+  {{ booking_form.children }}
 
   <div class="guest-popup" id="guest-popup">
     <div class="popup-section">
