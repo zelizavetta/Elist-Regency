@@ -1,14 +1,14 @@
+{% extends "base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-  <meta charset="UTF-8">
+
+{% block head %}
   <title>Бронирование номера {{ room.number }}</title>
   <link rel="stylesheet" href="{% static 'css/booking_page.css' %}">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-</head>
-<body>
-  <h1>Номер {{ room.number }} — {{ room.get_room_type_display }}</h1>
+{% endblock %}
+
+{% block content %}
+<h1>Номер {{ room.number }} — {{ room.get_room_type_display }}</h1>
   <form method="post" class="booking-form">
     {% csrf_token %}
     <div>
@@ -57,5 +57,4 @@
       }
     });
   </script>
-</body>
-</html>
+{% endblock %}

@@ -1,13 +1,11 @@
+{% extends "base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-  <meta charset="UTF-8">
-  <title>Поиск свободных номеров</title>
+
+{% block head %}
   <link rel="stylesheet" href="{% static 'css/booking_page.css' %}">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-</head>
-<body>
+{% endblock %}
+{% block content %}
   <form method="post" action="{% url 'find_rooms' %}" class="booking-form">
     {% csrf_token %}
     <input type="hidden" name="form_type" value="booking" />
@@ -81,5 +79,5 @@
       }
     });
   </script>
-</body>
-</html>
+{% endblock %}
+

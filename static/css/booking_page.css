@@ -12,6 +12,8 @@
 
 .booking-group-in {
     margin-left: 64px;
+    display: flex;
+    flex-direction: column;
 }
 
 .custom-date-input {
@@ -24,6 +26,8 @@
 
 .booking-group-out {
     margin-left: 32px;
+    display: flex;
+    flex-direction: column;
 }
 
 .guest-field {

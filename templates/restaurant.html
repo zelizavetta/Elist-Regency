@@ -8,10 +8,12 @@
         {{ d.description }}<br>
         <form method="post" action="{% url 'cart_add' %}">
           {% csrf_token %}
-          <input type="hidden" name="dish_id" value="{{ d.pk }}">
-          <input type="number" name="quantity" value="1" min="1" style="width: 50px;">
+          <input type="hidden" name="dish_id"   value="{{ d.pk }}">
+          <input type="hidden" name="quantity"  value="1">
+          <input type="hidden" name="next"      value="{{ request.path }}">
           <button type="submit">Добавить в корзину</button>
         </form>
+        
       </li>
     {% endfor %}
   </ul>

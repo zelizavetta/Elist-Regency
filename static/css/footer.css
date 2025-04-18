@@ -5,6 +5,7 @@ html, body {
 }
 
 .footer {
+    margin-top: 56px;
     position: fixed;
     bottom: 0;
     display: flex;

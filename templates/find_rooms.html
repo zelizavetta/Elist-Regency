@@ -1,16 +1,23 @@
+{% extends "base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-  <meta charset="UTF-8"><title>Свободные номера</title>
-</head>
-<body>
-  <h1>Свободные номера с {{ check_in }} по {{ check_out }}</h1>
+
+{% block head %}
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+{% endblock %}
+{% block content %}
+<h1>Свободные номера с {{ check_in }} по {{ check_out }}</h1>
   {% if rooms %}
     <ul>
     {% for room in rooms %}
       <li>
-        Номер {{ room.number }} — {{ room.get_room_type_display }} за {{ room.price }} ₽/ночь
+        <div class="room-block">
+          <img src="{{ room.image_url }}"/>
+          <div class="room-info">
+            {{ room.get_room_type_display }}
+            {{ room.price }} ₽/ночь
+          </div>
+        
         <form method="post" action="{% url 'book_room' %}" style="display:inline">
           {% csrf_token %}
           <input type="hidden" name="room_id" value="{{ room.id }}">
@@ -21,6 +28,7 @@
           <!-- если нужно, передайте guests/children -->
           <button type="submit">Забронировать</button>
         </form>
+      </div>
       </li>
     {% endfor %}
     </ul>
@@ -28,5 +36,4 @@
     <p>Нет свободных номеров на эти даты.</p>
   {% endif %}
   <p><a href="{% url 'home' %}">← Назад</a></p>
-</body>
-</html>
+  {% endblock %}

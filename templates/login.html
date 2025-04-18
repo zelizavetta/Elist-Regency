@@ -1,18 +1,16 @@
+{% extends "base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <title>Вход</title>
-</head>
-<body>
-    <h1>Вход</h1>
-    <form method="post">
-        {% csrf_token %}
-        <input type="hidden" name="form_type" value="profile">
-        {{ profile_form.as_p }}
-        <button type="submit">Войти</button>
-    </form>
-    <p>Нет аккаунта? <a href="{% url 'register' %}">Зарегистрируйтесь</a></p>
-</body>
-</html>
+
+{% block head %}
+
+{% endblock %}
+{% block content %}
+<h1>Вход</h1>
+<form method="post">
+    {% csrf_token %}
+    <input type="hidden" name="form_type" value="profile">
+    {{ profile_form.as_p }}
+    <button type="submit">Войти</button>
+</form>
+<p>Нет аккаунта? <a href="{% url 'register' %}">Зарегистрируйтесь</a></p>
+{% endblock %}

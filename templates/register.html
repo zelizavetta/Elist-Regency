@@ -1,18 +1,15 @@
-<!-- user_form.html -->
+{% extends "base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <title>Регистрация пользователя</title>
-</head>
-<body>
-    <h1>Регистрация</h1>
+
+{% block head %}
+
+{% endblock %}
+{% block content %}
+<h1>Регистрация</h1>
     <form method="post">
         {% csrf_token %}
         <input type="hidden" name="form_type" value="profile">
         {{ profile_form.as_p }}
         <button type="submit">Отправить</button>
     </form>
-</body>
-</html>
+{% endblock %}

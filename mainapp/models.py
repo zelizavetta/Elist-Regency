@@ -1,6 +1,7 @@
 # models.py
 from django.db import models
 from django.contrib.auth.models import User
+from django.templatetags.static import static
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
@@ -10,18 +11,30 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return self.name or self.user.username
-    
+
 
 class Room(models.Model):
-    """Отдельный номер в отеле."""
-    number = models.CharField("Номер", max_length=10, unique=True)
-    room_type = models.CharField("Тип номера", max_length=50,
-                                 choices=[
-                                     ("comfort", "Комфорт"),
-                                     ("comfort_plus", "Комфорт+"),
-                                     ("apartment", "Апартаменты"),
-                                 ])
-    price = models.DecimalField("Цена за ночь", max_digits=8, decimal_places=2)
+    COMFORT      = "comfort"
+    COMFORT_PLUS = "comfort_plus"
+    APARTMENT    = "apartment"
+
+    ROOM_TYPE_CHOICES = [
+        (COMFORT,      "Комфорт"),
+        (COMFORT_PLUS, "Комфорт+"),
+        (APARTMENT,    "Апартаменты"),
+    ]
+
+    number    = models.CharField("Номер", max_length=10, unique=True)
+    room_type = models.CharField("Тип номера",
+                                 max_length=50,
+                                 choices=ROOM_TYPE_CHOICES)
+    price     = models.DecimalField("Цена за ночь",
+                                    max_digits=8, decimal_places=2)
+
+    # убираем choices из ImageField — пусть всегда хранит просто путь (или совсем убираем поле)
+    image = models.ImageField("Изображение номера",
+                              upload_to='rooms/',
+                              blank=True)
 
     class Meta:
         verbose_name = "Номер"
@@ -30,6 +43,23 @@ class Room(models.Model):
 
     def __str__(self):
         return f"Номер {self.number} ({self.get_room_type_display()})"
+
+    # статическая мапа тип→путь
+    IMAGE_MAP = {
+        COMFORT:      'img/room2.jpg',
+        COMFORT_PLUS: 'img/room3.jpg',
+        APARTMENT:    'img/room7.jpg',
+    }
+
+    @property
+    def image_url(self):
+        """
+        Возвращаем статический путь в зависимости от room_type.
+        Для использования в шаблоне как {{ room.image_url }}.
+        """
+        # static() оборачивает относительный путь в URL из STATIC_URL
+        return static(self.IMAGE_MAP.get(self.room_type, 'img/default.jpg'))
+
 
 
 class Booking(models.Model):

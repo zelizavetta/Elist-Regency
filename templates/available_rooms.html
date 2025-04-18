@@ -1,27 +1,24 @@
+{% extends "base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-  <meta charset="UTF-8">
-  <title>Свободные номера</title>
+{% block head %}
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
-</head>
-<body>
+{% endblock %}
+
+{% block content %}
   <h1>Свободные номера с {{ check_in }} по {{ check_out }}</h1>
 
-  {% if rooms %}
-    <ul>
-    {% for room in rooms %}
-      <li>
-        Номер {{ room.number }} — {{ room.get_room_type_display }}  
-        (<a href="{% url 'room_detail' room.pk %}">Подробнее и забронировать</a>)
-      </li>
-    {% endfor %}
-    </ul>
-  {% else %}
-    <p>К сожалению, нет свободных номеров на эти даты.</p>
-  {% endif %}
+    {% if rooms %}
+      <ul>
+      {% for room in rooms %}
+        <li>
+          Номер {{ room.number }} — {{ room.get_room_type_display }}  
+          (<a href="{% url 'room_detail' room.pk %}">Подробнее и забронировать</a>)
+        </li>
+      {% endfor %}
+      </ul>
+    {% else %}
+      <p>К сожалению, нет свободных номеров на эти даты.</p>
+    {% endif %}
 
-  <p><a href="{% url 'home' %}">← Вернуться к поиску</a></p>
-</body>
-</html>
+    <p><a href="{% url 'home' %}">← Вернуться к поиску</a></p>
+{% endblock %}

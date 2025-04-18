@@ -9,7 +9,7 @@ import json
 from django.db.models import Q
 from datetime import datetime, timedelta
 from django.views.decorators.http import require_POST
-
+from django.http import HttpResponseRedirect
 
 
 def index(request):
@@ -294,7 +294,10 @@ def cart_add(request):
     else:
         item.quantity = quantity
     item.save()
-    return redirect('cart_detail')
+
+    # куда редиректим — сначала смотрим hidden next, затем Referer, иначе на главную
+    next_url = request.POST.get('next') or request.META.get('HTTP_REFERER', '/')
+    return HttpResponseRedirect(next_url)
 
 @login_required
 @require_POST
