@@ -4,14 +4,6 @@ html, body {
     padding: 0;
 }
 
-body {
-    background-image: url('/static/img/title_bg.jpg');
-    background-repeat: no-repeat;
-    background-position: center center;
-    background-attachment: fixed;
-    background-size: cover;
-}
-
 .footer {
     position: fixed;
     bottom: 0;

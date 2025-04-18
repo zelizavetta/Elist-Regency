@@ -1,14 +1,27 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import UserProfile
+from .models import UserProfile, Booking
 
 
-class BookingForm(forms.Form):
-    check_in = forms.DateField(widget=forms.DateInput(attrs={'type': 'date', 'class': 'custom-date-input',}), label='Дата заезда')
-    check_out = forms.DateField(widget=forms.DateInput(attrs={'type': 'date', 'class': 'custom-date-input',}), label='Дата выезда')
-    guests = forms.IntegerField(widget=forms.HiddenInput(), initial=1)
-    children = forms.IntegerField(widget=forms.HiddenInput(), initial=0)
+class DateTextInput(forms.DateInput):
+    input_type = 'text'   # вместо 'date'
+
+class BookingForm(forms.ModelForm):
+    class Meta:
+        model = Booking
+        fields = ['check_in', 'check_out', 'guests', 'children']
+        widgets = {
+            'check_in': DateTextInput(attrs={'class': 'custom-date-input'}),
+            'check_out': DateTextInput(attrs={'class': 'custom-date-input'}),
+            'guests': forms.HiddenInput(),
+            'children': forms.HiddenInput(),
+        }
+        labels = {
+            'check_in': 'Дата заезда',
+            'check_out': 'Дата выезда',
+        }
+
 
 class ProfileForm(forms.ModelForm):
     class Meta:

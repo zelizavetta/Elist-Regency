@@ -1,0 +1,42 @@
+.rooms {
+    display: flex;
+    flex-direction: row;
+    gap: 32px;
+}
+
+.room-block {
+    width: 266px;
+    height: 480px;
+    background-color: bisque;
+    display: flex;
+    flex-direction: column;
+    padding: 8px;
+    border-radius: 8px;
+}
+
+
+.room-block img {
+    width: 250px;
+    height: 250px;
+    border-radius: 10px;
+    margin-bottom: 32px;
+}
+
+.room-block p {
+    text-align: left !important;
+}
+
+.room-title {
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.booking-bttn {
+    align-self: end;
+    height: 30px;
+    width: 250px;
+}
+
+.room-info {
+    height: 100%;
+}

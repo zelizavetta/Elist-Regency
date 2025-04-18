@@ -1,0 +1,32 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8"><title>Свободные номера</title>
+</head>
+<body>
+  <h1>Свободные номера с {{ check_in }} по {{ check_out }}</h1>
+  {% if rooms %}
+    <ul>
+    {% for room in rooms %}
+      <li>
+        Номер {{ room.number }} — {{ room.get_room_type_display }} за {{ room.price }} ₽/ночь
+        <form method="post" action="{% url 'book_room' %}" style="display:inline">
+          {% csrf_token %}
+          <input type="hidden" name="room_id" value="{{ room.id }}">
+          <input type="hidden" name="check_in"  value="{{ check_in }}">
+          <input type="hidden" name="check_out" value="{{ check_out }}">
+          <input type="hidden" name="guests"     value="{{ request.POST.guests }}">
+          <input type="hidden" name="children"   value="{{ request.POST.children }}">
+          <!-- если нужно, передайте guests/children -->
+          <button type="submit">Забронировать</button>
+        </form>
+      </li>
+    {% endfor %}
+    </ul>
+  {% else %}
+    <p>Нет свободных номеров на эти даты.</p>
+  {% endif %}
+  <p><a href="{% url 'home' %}">← Назад</a></p>
+</body>
+</html>

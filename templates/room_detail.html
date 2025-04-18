@@ -1,0 +1,61 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Бронирование номера {{ room.number }}</title>
+  <link rel="stylesheet" href="{% static 'css/booking_page.css' %}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+</head>
+<body>
+  <h1>Номер {{ room.number }} — {{ room.get_room_type_display }}</h1>
+  <form method="post" class="booking-form">
+    {% csrf_token %}
+    <div>
+      <label for="id_check_in">{{ form.check_in.label }}</label>
+      {{ form.check_in }}
+    </div>
+    <div>
+      <label for="id_check_out">{{ form.check_out.label }}</label>
+      {{ form.check_out }}
+    </div>
+    {{ form.guests }}
+    {{ form.children }}
+    <button type="submit">Забронировать</button>
+  </form>
+
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script>
+    const booked = {{ booked_dates_json|safe }};  // даты только для этого номера
+
+    // общая опция disable: занятые даты + все до вчера
+    const disableDates = [
+      { to: new Date().fp_incr(-1) },
+      ...booked
+    ];
+
+    const fp2 = flatpickr("#id_check_out", {
+      dateFormat: "Y-m-d",
+      disable: disableDates,
+      minDate: "today",
+      disableMobile: true
+    });
+    flatpickr("#id_check_in", {
+      dateFormat: "Y-m-d",
+      disable: disableDates,
+      minDate: "today",
+      disableMobile: true,
+      onChange(selected) {
+        if (selected.length) {
+          const nd = new Date(selected[0].getTime() + 86400000);
+          fp2.set("minDate", nd);
+          if (fp2.input.value) {
+            const od = fp2.parseDate(fp2.input.value, "Y-m-d");
+            if (od < nd) fp2.clear();
+          }
+        }
+      }
+    });
+  </script>
+</body>
+</html>

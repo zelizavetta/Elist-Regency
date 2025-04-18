@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>{{ restaurant.get_type_display }}: {{ restaurant.name }}</h1>
+  <ul>
+    {% for d in dishes %}
+      <li>
+        <strong>{{ d.name }}</strong> – {{ d.price }} ₽<br>
+        {{ d.description }}<br>
+        <form method="post" action="{% url 'cart_add' %}">
+          {% csrf_token %}
+          <input type="hidden" name="dish_id" value="{{ d.pk }}">
+          <input type="number" name="quantity" value="1" min="1" style="width: 50px;">
+          <button type="submit">Добавить в корзину</button>
+        </form>
+      </li>
+    {% endfor %}
+  </ul>
+  <p><a href="{% url 'cart_detail' %}">Перейти в корзину</a></p>
+{% endblock %}

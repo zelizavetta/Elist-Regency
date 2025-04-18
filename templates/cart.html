@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>Ваша корзина</h1>
+  {% if items %}
+    <ul>
+      {% for item in items %}
+        <li>
+          {{ item.dish.name }} × {{ item.quantity }} = {{ item.total_price }} ₽
+          <form method="post" action="{% url 'cart_remove' %}" style="display:inline">
+            {% csrf_token %}
+            <input type="hidden" name="item_id" value="{{ item.pk }}">
+            <button type="submit">Удалить</button>
+          </form>
+        </li>
+      {% endfor %}
+    </ul>
+    <p><strong>Итого: {{ total }} ₽</strong></p>
+  {% else %}
+    <p>Корзина пуста.</p>
+  {% endif %}
+  <p><a href="{% url 'restaurants' %}">← Вернуться к выбору</a></p>
+{% endblock %}

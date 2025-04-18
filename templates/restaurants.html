@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>Выберите заведение</h1>
+  <ul>
+    {% for r in restaurants %}
+      <li>
+        <a href="{% url 'restaurant_detail' r.pk %}">
+          {{ r.get_type_display }}: {{ r.name }}
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+{% endblock %}
