@@ -10,6 +10,7 @@ from django.db.models import Q
 from datetime import datetime, timedelta
 from django.views.decorators.http import require_POST
 from django.http import HttpResponseRedirect
+from datetime import date
 
 
 def index(request):
@@ -210,7 +211,6 @@ def account(request):
                 # если надо, привяжите и room, либо обрабатывайте как у вас
                 booking.save()
                 return redirect('account')
-
     # Существующие брони текущего пользователя
     user_bookings = Booking.objects.filter(user=request.user).order_by('-created_at')
 
@@ -223,13 +223,31 @@ def account(request):
             d += timedelta(days=1)
     booked_dates = sorted(set(booked_dates))
 
+    # все брони пользователя, отсортированные по дате создания
+    user_bookings = Booking.objects.filter(user=request.user).order_by('-created_at')
+
+    today = date.today()
+    current_bookings = user_bookings.filter(check_out__gte=today)
+    past_bookings    = user_bookings.filter(check_out__lt =today)
+
     return render(request, 'account.html', {
         'profile_form': profile_form,
         'booking_form': booking_form,
         'name': profile.name or request.user.username,
         'bookings': user_bookings,
         'booked_dates_json': json.dumps(booked_dates),
+        'current_bookings': current_bookings,
+        'past_bookings':    past_bookings,
     })
+
+@login_required
+@require_POST
+def cancel_booking(request, booking_id):
+    # Ищем именно бронь этого пользователя
+    booking = get_object_or_404(Booking, pk=booking_id, user=request.user)
+    # Удаляем (или помечаем как отменённую, если захотите вместо delete())
+    booking.delete()
+    return redirect('account')
 
 @login_required
 def usersettings(request):

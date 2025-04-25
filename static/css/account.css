@@ -6,10 +6,6 @@ body {
     height: 100vh;
 }
 
-.account p {
-    font-size: 24px;
-}
-
 .account {
     margin: 0;
 }
@@ -74,4 +70,28 @@ body {
 
 .services ul {
     list-style: none;
+}
+
+.cur-room-description {
+    display: flex;
+    flex-direction: column;
+    gap: 0px;
+}
+
+.cur-room-description p {
+    margin: 0;
+    margin-top: 8px;
+    font-size: 14px !important;
+}
+
+.cur-room-description button {
+    margin-top: 24px;
+    width: 250px;
+    height: 32px;
+    background-color: #EEAD77;
+    color: white;
+    border: 0;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
 }

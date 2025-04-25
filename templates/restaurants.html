@@ -1,13 +1,17 @@
 {% extends "base.html" %}
 {% block content %}
-  <h1>Выберите заведение</h1>
-  <ul>
+  {% include "header.html" %}
+  <div style="padding: 40px;">
+  <h1 style="margin-top: 64px;">Наши рестораны</h1>
+  <div style="display: flex; flex-direction: row; gap: 16px;">
     {% for r in restaurants %}
-      <li>
         <a href="{% url 'restaurant_detail' r.pk %}">
-          {{ r.get_type_display }}: {{ r.name }}
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <img src="{{ r.image_url }}" style="width:360px; height:300px; border:#EEAD77 2px solid; border-radius:10px; margin-top:8px;"/>
+            {{ r.get_name_display }}
+          </div>
         </a>
-      </li>
     {% endfor %}
-  </ul>
+  </div>
+</div>
 {% endblock %}

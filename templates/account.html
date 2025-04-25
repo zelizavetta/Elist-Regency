@@ -9,38 +9,55 @@
 
 {% block content %}
     {% include "header.html" %}
-        <div class="account" style="display: flex; flex-direction:column; margin-top: 80px; padding: 40px;">
+        <div class="account" style="display: flex; flex-direction:column; margin-top: 64px; padding: 40px;">
             <div style="display: flex; flex-direction: row; justify-content:space-between; align-items: center;">
-                <p>
-                    Здравствуйте, <b>{{ name }}</b>
+                <p style="font-size: 24px;">
+                    Здравствуйте, <b style="color: #EEAD77;">{{ name }}</b>
                 </p>
                 <a href="{% url 'usersettings' %}" >
                     <img style="margin-bottom: 8px;" src="{% static 'img/settings.svg' %}" />
                 </a>
             </div>
             {% include "booking.html" %}
-            <div style="display: flex; flex-direction: row; margin-top: 48px; justify-content:space-between;">
+            <div style="display: flex; flex-direction: row; justify-content:space-between;">
                 <div style="display: flex; flex-direction: column;">
-                    <h2>Ваши бронирования</h2>
-                    {% if bookings %}
-                    <ul class="user-bookings">
-                        {% for b in bookings %}
-                        <li>
-                            {% if forloop.first %}
-                            <strong>
-                            {% endif %}
-                            Номер {{ b.room.number }}: {{ b.check_in }} – {{ b.check_out }}, 
-                            гости {{ b.guests }}, дети {{ b.children }}
-                            {% if forloop.first %}
-                            </strong>
-                            {% endif %}
-                        </li>
+                    <h2>Текущее бронирование</h2>
+                    {% if current_bookings %}
+                        {% for b in current_bookings %}
+                        <div style="display:flex; gap:16px; margin-left:32px; margin-bottom:32px;">
+                            <img src="{{ b.room.image_url }}"
+                                style="width:200px; height:140px; border:#EEAD77 2px solid; border-radius:10px; margin-top:8px;"/>
+                            <div class="cur-room-description">
+                            <p><b>Номер</b> {{ b.room.room_type }}</p>
+                            <p><b>Даты</b> {{ b.check_in }} – {{ b.check_out }}</p>
+                            <p><b>Гости</b> {{ b.guests }}, дети {{ b.children }}</p>
+                            <form method="post" action="{% url 'cancel_booking' b.pk %}">
+                                {% csrf_token %}
+                                <button type="submit">Отменить бронирование</button>
+                            </form>
+                            </div>
+                        </div>
                         {% endfor %}
-                    </ul>
                     {% else %}
-                    <p>У вас пока нет бронирований.</p>
+                        <p>У вас нет активных броней.</p>
                     {% endif %}
-
+                        <h2>
+                            История бронирования
+                        </h2>
+                        {% if past_bookings %}
+                            {% for b in past_bookings %}
+                            <div style="display:flex; gap:16px; margin-left:32px; margin-bottom:32px;">
+                                <img src="{{ b.room.image_url }}"
+                                    style="width:200px; height:140px; border:#EEAD77 2px solid; border-radius:10px; margin-top:8px;"/>
+                                <div class="cur-room-description">
+                                <p><b>Номер</b> {{ b.room.room_type }}</p>
+                                <p><b>Даты</b> {{ b.check_in }} – {{ b.check_out }}</p>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <p>У вас пока нет завершённых броней.</p>
+                        {% endif %}
                 </div>
                 <div class="services">
                     <p>
