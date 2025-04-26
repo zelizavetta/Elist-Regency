@@ -21,4 +21,11 @@
     height: 150vh;
     padding: 40px;
 }
-#section3 { background-color: #871a1a; }
+#section3 { 
+    background-color: #fff; 
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 150vh;
+    padding: 40px;
+ }

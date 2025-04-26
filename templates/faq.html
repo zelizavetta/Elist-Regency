@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/faq.css' %}">
+{% endblock %}
+
+{% block content %}
+<p style="font-size: 40px;">
+    FAQ
+</p>
+<div class="accordion">
+    <div class="accordion-item">
+      <button class="accordion-header">
+        Входит ли завтрак в стоимость проживания?
+        <img src="{% static 'img/accordion_icon.svg' %}"/>
+    </button>
+      <div class="accordion-content">
+        <p>Завтрак включён в тарифы «С завтраком» и «Полный пансион». Тариф «Room only» не включает питание, его можно добавить отдельно. Шведский стол подаётся ежедневно с 07:00 до 10:00..</p>
+      </div>
+    </div>
+  
+    <div class="accordion-item">
+      <button class="accordion-header">Какие способы оплаты вы принимаете?
+        <img src="{% static 'img/accordion_icon.svg' %}"/>
+      </button>
+      <div class="accordion-content">
+        <p>Банковские карты Visa, MasterCard, Maestro, American Express
+
+            Наличные (в национальной валюте и евро)
+            
+            Предоплата онлайн через безопасный платёжный шлюз
+            
+            Безналичный банковский перевод (по запросу)</p>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+    <button class="accordion-header">Какова политика отмены и изменения бронирования?
+        <img src="{% static 'img/accordion_icon.svg' %}"/>
+    </button>
+    <div class="accordion-content">
+      <p>Бесплатная отмена и изменение даты — не позднее чем за 48 часов до заезда.
+
+        При отмене менее чем за 48 часов или в случае no-show — удерживается 100 % стоимости первой ночи.
+        
+        Для специальных тарифов (non-refundable) отмена невозможна, средства не возвращаются.</p>
+    </div>
+    </div>
+
+    <div class="accordion-item">
+        <button class="accordion-header">Во сколько начинается регистрация заезда (check-in) и заканчивается выезд (check-out)?
+            <img src="{% static 'img/accordion_icon.svg' %}"/>
+        </button>
+        <div class="accordion-content">
+        <p>Check-in: с 14:00
+
+            Check-out: до 12:00
+            Раннее заселение или поздний выезд возможен по запросу и при наличии свободных номеров за дополнительную плату.</p>
+        </div>
+    </div>
+
+    <div class="accordion-item">
+        <button class="accordion-header">Нужно ли вносить предоплату и когда происходит списание средств?
+            <img src="{% static 'img/accordion_icon.svg' %}"/>
+        </button>
+        <div class="accordion-content">
+        <p>Предоплата в размере 100 % стоимости брони или стоимости первой ночи списывается сразу после подтверждения.
+
+            Остаток (если применимо) можно оплатить при заезде наличными или картой.</p>
+        </div>
+    </div>
+
+    <div class="accordion-item">
+        <button class="accordion-header">Какие документы необходимо предъявить при регистрации заезда?
+            <img src="{% static 'img/accordion_icon.svg' %}"/>
+        </button>
+        <div class="accordion-content">
+        <p>Паспорт или другой документ, удостоверяющий личность
+
+            Кредитную карту (если бронь оплачена картой) или ваучер
+            
+            Для иностранных гостей — миграционную карточку (если требуется по закону)</p>
+        </div>
+    </div>
+
+    <div class="accordion-item">
+        <button class="accordion-header">Есть ли на территории отеля бесплатный Wi-Fi и другие удобства (бассейн, фитнес-центр)?
+            <img src="{% static 'img/accordion_icon.svg' %}"/>
+        </button>
+        <div class="accordion-content">
+        <p>Wi-Fi — бесплатный и доступен во всех зонах отеля
+
+            Бассейн, сауна, фитнес-центр — включены в проживание
+            
+            Для спа-процедур и массажа может потребоваться предварительный заказ и дополнительная плата</p>
+        </div>
+    </div>
+
+    <div class="accordion-item">
+        <button class="accordion-header">Разрешено ли проживать с домашними животными?
+            <img src="{% static 'img/accordion_icon.svg' %}"/>
+        </button>
+        <div class="accordion-content">
+        <p>Размещение с маленькими животными (до 10 кг) разрешено по предварительному запросу
+
+            Взимается доплата €20 / сутки и залог €100 (возвращается при отсутствии повреждений)</p>
+        </div>
+    </div>
+</div>
+
+<!-- Вниз в шаблоне, перед </body> -->
+<script>
+    document.querySelectorAll('.accordion-header').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const item = btn.parentElement;
+        const accordion = item.parentElement;
+  
+        // Если нужно, чтобы открытым был только один раздел:
+        accordion.querySelectorAll('.accordion-item').forEach(i => {
+          if (i !== item) i.classList.remove('active');
+        });
+  
+        // Переключаем текущее
+        item.classList.toggle('active');
+      });
+    });
+  </script>
+  
+{% endblock %}
