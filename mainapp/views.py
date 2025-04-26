@@ -5,12 +5,14 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout
 from .models import UserProfile, Booking, Room, RoomBookedDate, Restaurant, Dish, Cart, CartItem
 from django.contrib.auth.decorators import login_required
+from django.contrib.admin.views.decorators import staff_member_required
 import json
 from django.db.models import Q
 from datetime import datetime, timedelta
 from django.views.decorators.http import require_POST
 from django.http import HttpResponseRedirect
 from datetime import date
+import calendar
 
 
 def index(request):
@@ -76,7 +78,6 @@ def find_rooms(request):
         'check_out': check_out
     })
 
-# views.py
 @login_required
 def book_room(request):
     if request.method != 'POST':
@@ -84,10 +85,8 @@ def book_room(request):
 
     room = get_object_or_404(Room, pk=request.POST.get('room_id'))
 
-    # Собираем форму сразу из POST, включая guests и children
     form = BookingForm(request.POST)
     if not form.is_valid():
-        # Здесь можно перенаправить назад с ошибками
         return redirect('find_rooms')
 
     booking = form.save(commit=False)
@@ -95,10 +94,14 @@ def book_room(request):
     booking.room = room
     booking.save()
 
-    # Обновляем RoomBookedDate
+    # Надёжно создаём даты брони, пропуская уже существующие
     d = booking.check_in
     while d <= booking.check_out:
-        RoomBookedDate.objects.create(room=room, date=d, booking=booking)
+        RoomBookedDate.objects.get_or_create(
+            room=room,
+            date=d,
+            defaults={'booking': booking}
+        )
         d += timedelta(days=1)
 
     return redirect('account')
@@ -167,9 +170,13 @@ def register_view(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            user = form.save()  # Создание объекта User; профиль будет создан через сигнал
-            login(request, user)  # Автоматический вход
-            return redirect('account')
+            user = form.save()              # создаём User
+            login(request, user)            # автоматически входим
+            # если у пользователя флаг staff (или вы используете группу «Manager»),
+            # отправляем в менеджерскую панель
+            if user.is_staff:
+                return redirect('manager_dashboard')
+            return redirect('account')     # обычный клиент
         else:
             print(form.errors)
     else:
@@ -183,14 +190,21 @@ def login_view(request):
         if auth_form.is_valid():
             user = auth_form.get_user()
             login(request, user)
+            # аналогичная проверка для менеджера
+            if user.is_staff:
+                return redirect('manager_dashboard')
             return redirect('account')
     else:
         auth_form = AuthenticationForm()
     return render(request, 'login.html', {'profile_form': auth_form})
 
-
 @login_required
 def account(request):
+    # Если это менеджер (staff), отправляем его в панель менеджера
+    if request.user.is_staff:
+        return redirect('manager_dashboard')
+
+    # Иначе — обычный клиент
     profile, _ = UserProfile.objects.get_or_create(user=request.user)
 
     profile_form = ProfileForm(instance=profile)
@@ -208,13 +222,24 @@ def account(request):
             if booking_form.is_valid():
                 booking = booking_form.save(commit=False)
                 booking.user = request.user
-                # если надо, привяжите и room, либо обрабатывайте как у вас
+                # тут, если нужно, привяжите booking.room
                 booking.save()
+                # Запись занятых дат
+                d = booking.check_in
+                while d <= booking.check_out:
+                    RoomBookedDate.objects.create(
+                        room=booking.room, date=d, booking=booking
+                    )
+                    d += timedelta(days=1)
                 return redirect('account')
-    # Существующие брони текущего пользователя
-    user_bookings = Booking.objects.filter(user=request.user).order_by('-created_at')
 
-    # Опционально: если вам нужен booked_dates_json для календаря на этой странице
+    # Получаем все брони пользователя
+    user_bookings = Booking.objects.filter(user=request.user).order_by('-created_at')
+    today = date.today()
+    current_bookings = user_bookings.filter(check_out__gte=today)
+    past_bookings    = user_bookings.filter(check_out__lt =today)
+
+    # Для календаря (если используется)
     booked_dates = []
     for b in Booking.objects.all():
         d = b.check_in
@@ -223,21 +248,13 @@ def account(request):
             d += timedelta(days=1)
     booked_dates = sorted(set(booked_dates))
 
-    # все брони пользователя, отсортированные по дате создания
-    user_bookings = Booking.objects.filter(user=request.user).order_by('-created_at')
-
-    today = date.today()
-    current_bookings = user_bookings.filter(check_out__gte=today)
-    past_bookings    = user_bookings.filter(check_out__lt =today)
-
     return render(request, 'account.html', {
-        'profile_form': profile_form,
-        'booking_form': booking_form,
-        'name': profile.name or request.user.username,
-        'bookings': user_bookings,
-        'booked_dates_json': json.dumps(booked_dates),
+        'profile_form':    profile_form,
+        'booking_form':    booking_form,
+        'name':            profile.name or request.user.username,
         'current_bookings': current_bookings,
         'past_bookings':    past_bookings,
+        'booked_dates_json': json.dumps(booked_dates),
     })
 
 @login_required
@@ -327,3 +344,72 @@ def cart_remove(request):
 
 def gallery(request):
     return render(request, 'gallery.html')
+
+def cleaning(request):
+    if request.method == 'POST':
+        selected_date = request.POST.get('date')
+        return render(request, 'cleaning_success.html', {'selected_date': selected_date})
+    
+    return render(request, 'cleaning.html')
+
+@staff_member_required
+def manager_dashboard(request):
+    # здесь любой «общий» доступ: все брони, комнаты, профили
+    from .models import Booking, Room, UserProfile
+    context = {
+        'rooms': Room.objects.all(),
+        'bookings': Booking.objects.select_related('user','room'),
+        'profiles': UserProfile.objects.select_related('user'),
+    }
+    return render(request, 'manager/dashboard.html', context)
+
+@login_required
+@staff_member_required
+@require_POST
+def manager_edit_room(request, pk):
+    room = get_object_or_404(Room, pk=pk)
+    # Читаем price из POST и сохраняем
+    new_price = request.POST.get('price')
+    try:
+        room.price = float(new_price)
+        room.save()
+    except (TypeError, ValueError):
+        # можно передать ошибку в сессию или логи
+        pass
+    return redirect('manager_dashboard')
+
+@staff_member_required
+def statistics_view(request):
+    # анализируем текущий год
+    year = date.today().year
+
+    # инициализируем словарь: для каждого месяца — ночей и выручки = 0
+    stats = {m: {'nights': 0, 'revenue': 0} for m in range(1, 13)}
+
+    # выбираем все брони с датой заезда в этом году
+    bookings = Booking.objects.filter(check_in__year=year)
+
+    for b in bookings:
+        month = b.check_in.month
+        # сколько ночей
+        nights = (b.check_out - b.check_in).days
+        stats[month]['nights']  += nights
+        stats[month]['revenue'] += nights * b.room.price
+
+    # превращаем в упорядоченный список для шаблона
+    stats_list = []
+    for m in range(1, 13):
+        stats_list.append({
+            'month':   calendar.month_name[m],       # Январь, Февраль…
+            'nights':  stats[m]['nights'],
+            'revenue': stats[m]['revenue'],
+        })
+
+    # общая выручка за год
+    total_revenue = sum(item['revenue'] for item in stats_list)
+
+    return render(request, 'manager/statistics.html', {
+        'year':          year,
+        'stats_list':    stats_list,
+        'total_revenue': total_revenue,
+    })

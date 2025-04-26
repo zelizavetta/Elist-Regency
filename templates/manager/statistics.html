@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>Статистика за {{ year }} год</h1>
+
+  <table style="border-collapse: collapse; width: 100%; max-width:600px;">
+    <thead>
+      <tr>
+        <th style="border:1px solid #ccc; padding:8px;">Месяц</th>
+        <th style="border:1px solid #ccc; padding:8px;">Ночи (занято)</th>
+        <th style="border:1px solid #ccc; padding:8px;">Выручка, ₽</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in stats_list %}
+        <tr>
+          <td style="border:1px solid #ccc; padding:8px;">{{ row.month }}</td>
+          <td style="border:1px solid #ccc; padding:8px; text-align:right;">
+            {{ row.nights }}
+          </td>
+          <td style="border:1px solid #ccc; padding:8px; text-align:right;">
+            {{ row.revenue|floatformat:2 }}
+          </td>
+        </tr>
+      {% endfor %}
+      <tr>
+        <td style="border:1px solid #ccc; padding:8px;"><strong>Итого</strong></td>
+        <td style="border:1px solid #ccc; padding:8px;"></td>
+        <td style="border:1px solid #ccc; padding:8px; text-align:right;">
+          <strong>{{ total_revenue|floatformat:2 }}</strong>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p><a href="{% url 'manager_dashboard' %}">← Назад в панель менеджера</a></p>
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>Панель менеджера</h1>
+
+  <h2>Все номера</h2>
+  <ul>
+    {% for r in rooms %}
+      <li style="margin-bottom:16px;">
+        <strong>Номер:</strong> {{ r.number }} —
+        <strong>Тип:</strong> {{ r.get_room_type_display }} —
+        <strong>Цена:</strong>
+        <!-- Inline-форма для изменения цены -->
+        <form method="post"
+              action="{% url 'manager_edit_room' r.pk %}"
+              style="display:inline">
+          {% csrf_token %}
+          <input type="text"
+                 name="price"
+                 value="{{ r.price }}"
+                 style="width:80px; text-align:right;">
+          <button type="submit">Сохранить</button>
+        </form>
+        ₽/ночь
+      </li>
+    {% endfor %}
+  </ul>
+
+  <h2>Все брони</h2>
+  <ul>
+    {% for b in bookings %}
+      <li>
+        {{ b.user.username }} забронировал(а) {{ b.room.number }}
+        с {{ b.check_in }} по {{ b.check_out }}
+      </li>
+    {% endfor %}
+  </ul>
+
+  <h2>Профили пользователей</h2>
+  <ul>
+    {% for p in profiles %}
+      <li>{{ p.user.username }} — {{ p.name }} — {{ p.phone }} — {{ p.email }}</li>
+    {% endfor %}
+  </ul>
+  <form method="post" action="{% url 'logout' %}">
+    {% csrf_token %}
+    <button type="submit">Выйти</button>
+</form>
+<a href="{% url 'manager_stats' %}">
+  <button>
+    Посмотреть статистику
+  </button>
+</a>
+{% endblock %}
