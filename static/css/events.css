@@ -1,0 +1,41 @@
+.events-wrapper {
+    padding-top: 100px;
+    text-align: center;
+  }
+  
+  .events-title {
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 40px;
+  }
+  
+  .carousel-container {
+    position: relative;
+    overflow: hidden;
+    width: 90%;
+    margin: 0 auto;
+  }
+  
+  .carousel-track {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding-bottom: 20px;
+  }
+  
+  .event-card {
+    flex: 0 0 auto;
+    width: 300px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    text-align: left;
+  }
+  
+  .event-card img {
+    width: 100%;
+    border-radius: 10px;
+    margin-bottom: 10px;
+  }

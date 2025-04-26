@@ -324,3 +324,6 @@ def cart_remove(request):
     item    = get_object_or_404(CartItem, pk=item_id, cart__user=request.user)
     item.delete()
     return redirect('cart_detail')
+
+def gallery(request):
+    return render(request, 'gallery.html')

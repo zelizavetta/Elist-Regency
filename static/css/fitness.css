@@ -1,0 +1,50 @@
+.fitness-wrapper {
+    padding-top: 100px;
+    text-align: center;
+  }
+  
+  .fitness-title {
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 40px;
+  }
+  
+  .carousel-container {
+    position: relative;
+    overflow: hidden;
+    width: 960px; /* 3 карточки одновременно */
+    margin: 0 auto;
+  }
+  
+  .carousel-track {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding-bottom: 20px;
+  }
+  
+  .fitness-card {
+    flex: 0 0 300px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    text-align: left;
+  }
+  
+  .fitness-card img {
+    width: 100%;
+    border-radius: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .fitness-description {
+    max-width: 800px;
+    margin: 20px auto 40px;
+    font-size: 18px;
+    color: #555;
+    line-height: 1.6;
+    text-align: center;
+  }
+  

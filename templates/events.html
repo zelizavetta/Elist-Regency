@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head %}
+  <link rel="stylesheet" href="{% static 'css/events.css' %}">
+{% endblock %}
+
+{% block content %}
+  {% include "header.html" %}
+
+  <div class="events-wrapper">
+    <h1 class="events-title">Ближайшие мероприятия</h1>
+
+    <div class="carousel-container">
+      <button class="carousel-btn prev">&#10094;</button>
+
+      <div class="carousel-track">
+        <!-- Карточки мероприятий -->
+        <div class="event-card">
+          <img src="{% static 'img/event1.jpg' %}" alt="Событие 1">
+          <h3>Конференция</h3>
+          <p>1-7 января, Зал №1</p>
+        </div>
+        <div class="event-card">
+          <img src="{% static 'img/event2.jpg' %}" alt="Событие 2">
+          <h3>Фуршет</h3>
+          <p>28 мая, Ресторан</p>
+        </div>
+        <div class="event-card">
+          <img src="{% static 'img/event3.jpg' %}" alt="Событие 3">
+          <h3>Музыкальный вечер</h3>
+          <p>27 июня, Лобби</p>
+        </div>
+        <div class="event-card">
+          <img src="{% static 'img/event4.jpg' %}" alt="Событие 4">
+          <h3>Кулинарный мастер-класс</h3>
+          <p>3 ноября, Кухня</p>
+        </div>
+        <div class="event-card">
+          <img src="{% static 'img/event5.jpg' %}" alt="Событие 5">
+          <h3>Йога на рассвете</h3>
+          <p>26 июля, Терраса</p>
+        </div>
+        <div class="event-card">
+          <img src="{% static 'img/event6.jpg' %}" alt="Событие 6">
+          <h3>Выставка художников</h3>
+          <p>8 июня, Галерея</p>
+        </div>
+      </div>
+
+      <button class="carousel-btn next">&#10095;</button>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const track = document.querySelector('.carousel-track');
+  const cardWidth = 320; // ширина карточки + отступы
+  const visibleCards = 3;
+  const scrollStep = cardWidth; // Прокручиваем по одной карточке
+</script>
+{% endblock %}

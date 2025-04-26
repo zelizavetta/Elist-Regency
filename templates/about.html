@@ -15,12 +15,14 @@
       </p>
       <div class="photo">
         <img id="main-photo" src="{% static 'img/hotel_main_photo.jpg'%}" />
-        <div class="image-wrapper">
-          <img id="inside-photo" src="{% static 'img/hotel_inside_photo.jpg'%}">
-          <div class="overlay">
-            Галерея
+        <a href="{% url 'gallery' %}">
+          <div class="image-wrapper">
+            <img id="inside-photo" src="{% static 'img/hotel_inside_photo.jpg'%}">
+            <div class="overlay">
+              Галерея
+            </div>
           </div>
-        </div>
+        </a>
       </div>
     </div>
 {% endblock %}

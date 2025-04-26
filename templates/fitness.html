@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head %}
+  <link rel="stylesheet" href="{% static 'css/fitness.css' %}">
+{% endblock %}
+
+{% block content %}
+  {% include "header.html" %}
+
+  <div class="fitness-wrapper">
+    <h1 class="fitness-title">Фитнес и Бассейн</h1>
+    <p class="fitness-description">
+        Добро пожаловать в наш фитнес-центр и спа-комплекс! Вас ждут просторные тренажерные залы, современный бассейн, релаксирующие сауны и разнообразные групповые тренировки. Занимайтесь спортом с удовольствием и отдыхайте с комфортом!
+      </p>
+    <div class="carousel-container">
+      <div class="carousel-track">
+        <div class="fitness-card">
+          <img src="{% static 'img/fitness1.jpg' %}" alt="Тренажерный зал">
+        </div>
+        <div class="fitness-card">
+          <img src="{% static 'img/fitness2.jpg' %}" alt="Бассейн">
+        </div>
+        <div class="fitness-card">
+          <img src="{% static 'img/fitness3.jpg' %}" alt="Сауна">
+        </div>
+        <div class="fitness-card">
+          <img src="{% static 'img/fitness4.jpg' %}" alt="Зал групповых программ">
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

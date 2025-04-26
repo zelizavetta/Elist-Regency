@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head %}
+  <link rel="stylesheet" href="{% static 'css/gallery.css' %}">
+{% endblock %}
+
+{% block content %}
+  {% include "header.html" %}
+
+  <div class="gallery-wrapper">
+    <div class="gallery-page container">
+      <h1 class="gallery-title">Наша фотогалерея</h1>
+      <div class="gallery-grid">
+        <img src="{% static 'img/gallery1.jpg' %}" alt="Фото 1">
+        <img src="{% static 'img/gallery2.jpg' %}" alt="Фото 2">
+        <img src="{% static 'img/gallery3.jpg' %}" alt="Фото 3">
+        <img src="{% static 'img/gallery4.jpg' %}" alt="Фото 4">
+        <img src="{% static 'img/gallery5.jpg' %}" alt="Фото 5">
+        <img src="{% static 'img/gallery6.jpg' %}" alt="Фото 6">
+      </div>
+    </div>
+  </div>
+
+  {% include "footer.html" %}
+
+  <!-- Модальное окно -->
+  <div id="lightbox" class="lightbox">
+    <span class="close">&times;</span>
+    <img class="lightbox-content" id="lightbox-img">
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    const lightbox = document.getElementById("lightbox");
+    const lightboxImg = document.getElementById("lightbox-img");
+    const closeBtn = document.querySelector(".close");
+
+    document.querySelectorAll(".gallery-grid img").forEach(img => {
+      img.addEventListener("click", () => {
+        lightbox.style.display = "flex";
+        lightboxImg.src = img.src;
+      });
+    });
+
+    closeBtn.addEventListener("click", () => {
+      lightbox.style.display = "none";
+    });
+
+    lightbox.addEventListener("click", (e) => {
+      if (e.target === lightbox) {
+        lightbox.style.display = "none";
+      }
+    });
+  </script>
+{% endblock %}
