@@ -1,24 +1,26 @@
 {% extends "base.html" %}
 {% block content %}
-  {% include "header.html" %}
-  <div style="padding: 40px; margin-top: 64px;">
-  <h1>{{ restaurant.get_name_display }}</h1>
-  <ul>
-    {% for d in dishes %}
+  <h2>{{ restaurant.get_name_display }} — бронь №{{ booking.id }}</h2>
+  <p>Номер {{ booking.room.number }} ({{ booking.check_in }}–{{ booking.check_out }})</p>
+  <ul class="dishes">
+    {% for dish in dishes %}
       <li>
-        <strong>{{ d.name }}</strong> – {{ d.price }} ₽<br>
-        {{ d.description }}<br>
+        <img src="{{ dish.image_url }}" alt="{{ dish.name }}" width="80">
+        <h4>{{ dish.name }} — {{ dish.price }} ₽</h4>
+        <p>{{ dish.description }}</p>
         <form method="post" action="{% url 'cart_add' %}">
           {% csrf_token %}
-          <input type="hidden" name="dish_id"   value="{{ d.pk }}">
-          <input type="hidden" name="quantity"  value="1">
-          <input type="hidden" name="next"      value="{{ request.path }}">
-          <button type="submit">Добавить в корзину</button>
-        </form>
+          <input type="hidden" name="dish_id"    value="{{ dish.id }}">
+          <input type="hidden" name="booking_id" value="{{ booking.pk }}">
         
+          <label>Кол-во:
+            <input type="number" name="quantity" value="1" min="1">
+          </label>
+        
+          <button type="submit">Добавить в корзину</button>
+        </form>        
       </li>
     {% endfor %}
   </ul>
-  <p><a href="{% url 'cart_detail' %}">Перейти в корзину</a></p>
-</div>
+  <p><a href="{% url 'restaurants' booking.id %}">← Выбрать другое заведение</a></p>
 {% endblock %}

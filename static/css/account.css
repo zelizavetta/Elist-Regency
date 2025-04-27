@@ -1,13 +1,40 @@
-body {
-    background-color: #fff; 
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    height: 100vh;
-}
-
 .account {
     margin: 0;
+    padding: 40px;
+    margin-top: 72px;
+}
+
+.account-title {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.account-actions {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.all-bookings {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.booking-list {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+    padding-left: 32px;
+    height: 190px;
+}
+
+.booking-list img {
+    width: 250px;
+    height: 190px;
+    border: #EEAD77 2px solid;
+    border-radius: 10px;
 }
 
 .room img {
@@ -33,7 +60,7 @@ body {
 }
 
 .description p {
-    font-size: 12px;
+    font-size: 14px;
 }
 
 .cancle-bttn {
@@ -57,12 +84,6 @@ body {
     gap: 8px;
 }
 
-.services p {
-    margin: 0;
-    font-size: 16px;
-    font-weight: 600;
-}
-
 .services a {
     text-decoration: none;
     color: gray;
@@ -73,9 +94,11 @@ body {
 }
 
 .cur-room-description {
+    height: 100%;
     display: flex;
     flex-direction: column;
     gap: 0px;
+    justify-content: space-between;
 }
 
 .cur-room-description p {
@@ -85,7 +108,6 @@ body {
 }
 
 .cur-room-description button {
-    margin-top: 24px;
     width: 250px;
     height: 32px;
     background-color: #EEAD77;
@@ -94,4 +116,34 @@ body {
     border-radius: 10px;
     font-size: 14px;
     font-weight: 600;
+}
+
+.header-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0;
+    margin-top: 16px;
+    margin-bottom: 8px;
+}
+
+.cur-services {
+    width: 250px;
+    height: 350px;
+    border: #EEAD77 2px solid;
+    border-radius: 10px;
+    padding: 16px;
+}
+
+.cur-services p {
+    font-size: 14px;
+}
+
+.order-service {
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
+    margin-top: 32px;
+    padding-bottom: 16px;
+    margin: 0;
+    height: fit-content;
 }

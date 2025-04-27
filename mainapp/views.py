@@ -1,18 +1,17 @@
+import time
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse
-from .forms import BookingForm, CustomUserCreationForm, ProfileForm
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from .forms import BookingForm, CustomUserCreationForm, ProfileForm, ReviewForm
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, logout
-from .models import UserProfile, Booking, Room, RoomBookedDate, Restaurant, Dish, Cart, CartItem
+from .models import UserProfile, Booking, Room, RoomBookedDate, Restaurant, Dish, Cart, CartItem, Review
 from django.contrib.auth.decorators import login_required
-from django.contrib.admin.views.decorators import staff_member_required
 import json
 from django.db.models import Q
-from datetime import datetime, timedelta
+from datetime import timedelta
 from django.views.decorators.http import require_POST
 from django.http import HttpResponseRedirect
 from datetime import date
-import calendar
+from django.contrib import messages
 
 
 def index(request):
@@ -72,8 +71,15 @@ def find_rooms(request):
 
     available = Room.objects.exclude(id__in=overlapping)
 
+    unique = []
+    seen = set()
+    for room in available:
+        if room.room_type not in seen:
+            unique.append(room)
+            seen.add(room.room_type)
+
     return render(request, 'find_rooms.html', {
-        'rooms': available,
+        'rooms': sorted(unique, key=lambda room: room.price),
         'check_in': check_in,
         'check_out': check_out
     })
@@ -153,8 +159,19 @@ def room_detail(request, pk):
 
 def rooms(request):
     # ваше представление, например:
-    rooms = Room.objects.all()
-    return render(request, 'rooms.html', {'rooms': rooms})
+    rooms_qs = Room.objects.order_by('room_type', 'number')
+
+    # Собираем первый попавшийся номер каждого типа
+    unique = []
+    seen = set()
+    for room in rooms_qs:
+        if room.room_type not in seen:
+            unique.append(room)
+            seen.add(room.room_type)
+
+    return render(request, 'rooms.html', {
+        'rooms': sorted(unique, key=lambda room: room.price),
+    })
 
 
 def restaurant(request):
@@ -199,6 +216,22 @@ def login_view(request):
     return render(request, 'login.html', {'profile_form': auth_form})
 
 @login_required
+def current_bookings(request):
+    user_bookings = (
+        Booking.objects
+               .filter(user=request.user)
+               .select_related('room')
+               .order_by('-created_at')
+    )
+    today = date.today()
+    current_bookings = user_bookings.filter(check_out__gte=today)
+
+    return render(request, 'current_bookings.html', {
+        'current_bookings': current_bookings
+    })
+
+
+@login_required
 def account(request):
     # Если это менеджер (staff), отправляем его в панель менеджера
     if request.user.is_staff:
@@ -234,7 +267,12 @@ def account(request):
                 return redirect('account')
 
     # Получаем все брони пользователя
-    user_bookings = Booking.objects.filter(user=request.user).order_by('-created_at')
+    user_bookings = (
+        Booking.objects
+               .filter(user=request.user)
+               .select_related('room')
+               .order_by('-created_at')
+    )
     today = date.today()
     current_bookings = user_bookings.filter(check_out__gte=today)
     past_bookings    = user_bookings.filter(check_out__lt =today)
@@ -248,13 +286,46 @@ def account(request):
             d += timedelta(days=1)
     booked_dates = sorted(set(booked_dates))
 
+    cart, _ = Cart.objects.get_or_create(user=request.user)
+    # Подгружаем все позиции вместе с рестораном
+    cart_items = cart.items.select_related('dish__restaurant')
+
+    # Составляем список уникальных ресторанов/баров
+    seen = set()
+    cart_restaurants = []
+    for item in cart_items:
+        rest = item.dish.restaurant
+        if rest.pk not in seen:
+            seen.add(rest.pk)
+            cart_restaurants.append(rest)
+
+    cart_items = CartItem.objects.filter(cart__user=request.user) \
+                                 .select_related('dish', 'booking')
+
+    # 2) Группируем по ID бронирования
+    orders_by_booking = {}
+    for ci in cart_items:
+        orders_by_booking.setdefault(ci.booking.id, []).append(ci)
+
+    # 3) Сделаем list из ваших QuerySet-ов и добавим атрибут food_orders
+    current_list = list(current_bookings)
+    for b in current_list:
+        b.food_orders = orders_by_booking.get(b.id, [])
+
+    past_list = list(past_bookings)
+    for b in past_list:
+        b.food_orders = orders_by_booking.get(b.id, [])
+
     return render(request, 'account.html', {
         'profile_form':    profile_form,
         'booking_form':    booking_form,
         'name':            profile.name or request.user.username,
-        'current_bookings': current_bookings,
-        'past_bookings':    past_bookings,
+        'current_bookings': current_list,
+        'past_bookings':    past_list,
         'booked_dates_json': json.dumps(booked_dates),
+        'cart_items':       cart_items,
+        'cart_restaurants': cart_restaurants,
+        'orders_by_booking': orders_by_booking,
     })
 
 @login_required
@@ -295,44 +366,68 @@ def logout_view(request):
         logout(request)
     return redirect('enter')
 
-def restaurants(request):
+def menu_restaurants(request):
     qs = Restaurant.objects.all()
-    return render(request, 'restaurants.html', {'restaurants': qs})
+    return render(request, "menu_restaurants.html", {
+        "restaurants": qs,
+    })
 
-def restaurant_detail(request, pk):
+def menu_restaurant_detail(request, pk):
     r = get_object_or_404(Restaurant, pk=pk)
-    return render(request, 'restaurant.html', {
-        'restaurant': r,
-        'dishes': r.dishes.all()
+    return render(request, "menu_restaurant.html", {
+        "restaurant": r,
+        "dishes":     r.dishes.all(),
+    })
+
+def restaurants(request, booking_pk):
+    booking = get_object_or_404(Booking, pk=booking_pk, user=request.user)
+    qs = Restaurant.objects.all()
+    return render(request, "restaurants.html", {
+        "booking":     booking,
+        "restaurants": qs,
+    })
+
+def restaurant_detail(request, booking_pk, rest_pk):
+    booking    = get_object_or_404(Booking, pk=booking_pk, user=request.user)
+    restaurant = get_object_or_404(Restaurant, pk=rest_pk)
+    return render(request, "restaurant.html", {
+        "booking":    booking,
+        "restaurant": restaurant,
+        "dishes":     restaurant.dishes.all(),
     })
 
 @login_required
 def cart_detail(request):
     cart, _ = Cart.objects.get_or_create(user=request.user)
     return render(request, 'cart.html', {
-        'cart': cart,
-        'items': cart.items.select_related('dish'),
+        'cart':  cart,
+        'items': cart.items.select_related('dish','booking'),
         'total': cart.total(),
     })
 
 @login_required
 @require_POST
 def cart_add(request):
-    dish_id  = request.POST.get('dish_id')
-    quantity = int(request.POST.get('quantity', 1))
-    dish     = get_object_or_404(Dish, pk=dish_id)
-    cart, _  = Cart.objects.get_or_create(user=request.user)
+    dish_id    = request.POST.get('dish_id')
+    booking_id = request.POST.get('booking_id')
+    quantity   = int(request.POST.get('quantity', 1))
 
-    item, created = CartItem.objects.get_or_create(cart=cart, dish=dish)
-    if not created:
-        item.quantity += quantity
-    else:
-        item.quantity = quantity
+    # 1) Достаём объекты
+    dish    = get_object_or_404(Dish, pk=dish_id)
+    booking = get_object_or_404(Booking, pk=booking_id, user=request.user)
+
+    # 4) Получаем или создаём корзину и элемент
+    cart, _ = Cart.objects.get_or_create(user=request.user)
+    item, created = CartItem.objects.get_or_create(
+        cart=cart, dish=dish, booking=booking
+    )
+
+    # 5) Обновляем количество, дату и время, и сохраняем
+    item.quantity   = item.quantity + quantity if not created else quantity
     item.save()
 
-    # куда редиректим — сначала смотрим hidden next, затем Referer, иначе на главную
-    next_url = request.POST.get('next') or request.META.get('HTTP_REFERER', '/')
-    return HttpResponseRedirect(next_url)
+    messages.success(request, "Блюдо добавлено в корзину.")
+    return redirect(request.META.get('HTTP_REFERER', 'cart_detail'))
 
 @login_required
 @require_POST
@@ -345,71 +440,49 @@ def cart_remove(request):
 def gallery(request):
     return render(request, 'gallery.html')
 
-def cleaning(request):
+def cleaning(request, pk):
     if request.method == 'POST':
         selected_date = request.POST.get('date')
         return render(request, 'cleaning_success.html', {'selected_date': selected_date})
     
     return render(request, 'cleaning.html')
 
-@staff_member_required
-def manager_dashboard(request):
-    # здесь любой «общий» доступ: все брони, комнаты, профили
-    from .models import Booking, Room, UserProfile
-    context = {
-        'rooms': Room.objects.all(),
-        'bookings': Booking.objects.select_related('user','room'),
-        'profiles': UserProfile.objects.select_related('user'),
-    }
-    return render(request, 'manager/dashboard.html', context)
+@login_required
+def leave_review(request):
+    # разрешаем только тем, у кого есть хотя бы одна прошлая бронь
+    has_past = Booking.objects.filter(
+        user=request.user,
+        check_out__lt=date.today()
+    ).exists()
+
+    if not has_past:
+        messages.error(request, "Оставить отзыв можно только после завершённой брони.")
+        return redirect('account')
+
+    if request.method == 'POST':
+        form = ReviewForm(request.POST)
+        if form.is_valid():
+            rev = form.save(commit=False)
+            rev.user = request.user
+            rev.save()
+            messages.success(request, "Спасибо за ваш отзыв!")
+            return redirect('account')
+    else:
+        form = ReviewForm()
+
+    return render(request, 'leave_review.html', {'form': form})
 
 @login_required
-@staff_member_required
 @require_POST
-def manager_edit_room(request, pk):
-    room = get_object_or_404(Room, pk=pk)
-    # Читаем price из POST и сохраняем
-    new_price = request.POST.get('price')
-    try:
-        room.price = float(new_price)
-        room.save()
-    except (TypeError, ValueError):
-        # можно передать ошибку в сессию или логи
-        pass
-    return redirect('manager_dashboard')
+def order_restaurant(request):
+    # просто убеждаемся, что корзина не пуста и закреплена за пользователем
+    cart = get_object_or_404(Cart, user=request.user)
+    print(cart)
+    if not cart.items.exists():
+        messages.error(request, "Корзина пуста.")
+        return redirect('cart_detail')
 
-@staff_member_required
-def statistics_view(request):
-    # анализируем текущий год
-    year = date.today().year
-
-    # инициализируем словарь: для каждого месяца — ночей и выручки = 0
-    stats = {m: {'nights': 0, 'revenue': 0} for m in range(1, 13)}
-
-    # выбираем все брони с датой заезда в этом году
-    bookings = Booking.objects.filter(check_in__year=year)
-
-    for b in bookings:
-        month = b.check_in.month
-        # сколько ночей
-        nights = (b.check_out - b.check_in).days
-        stats[month]['nights']  += nights
-        stats[month]['revenue'] += nights * b.room.price
-
-    # превращаем в упорядоченный список для шаблона
-    stats_list = []
-    for m in range(1, 13):
-        stats_list.append({
-            'month':   calendar.month_name[m],       # Январь, Февраль…
-            'nights':  stats[m]['nights'],
-            'revenue': stats[m]['revenue'],
-        })
-
-    # общая выручка за год
-    total_revenue = sum(item['revenue'] for item in stats_list)
-
-    return render(request, 'manager/statistics.html', {
-        'year':          year,
-        'stats_list':    stats_list,
-        'total_revenue': total_revenue,
-    })
+    # Фактически мы уже сохраняли дату/время в CartItem при добавлении в корзину.
+    # Здесь можно отметить корзину как «заказанную», но для простоты просто редиректим.
+    messages.success(request, "Ваш заказ еды принят! Проверьте личный кабинет.")
+    return redirect('account')

@@ -5,7 +5,9 @@
     <ul>
       {% for item in items %}
         <li>
-          {{ item.dish.name }} × {{ item.quantity }} = {{ item.total_price }} ₽
+          {{ item.dish.name }} × {{ item.quantity }} = {{ item.total_price }} ₽<br>
+          Доставка: {{ item.order_date }} в {{ item.order_time }}<br>
+          Номер: {{ item.booking.room.number }}
           <form method="post" action="{% url 'cart_remove' %}" style="display:inline">
             {% csrf_token %}
             <input type="hidden" name="item_id" value="{{ item.pk }}">
@@ -15,8 +17,12 @@
       {% endfor %}
     </ul>
     <p><strong>Итого: {{ total }} ₽</strong></p>
+
+    <form method="post" action="{% url 'order_restaurant' %}">
+      {% csrf_token %}
+      <button type="submit">Заказать еду</button>
+    </form>
   {% else %}
     <p>Корзина пуста.</p>
   {% endif %}
-  <p><a href="{% url 'restaurants' %}">← Вернуться к выбору</a></p>
 {% endblock %}

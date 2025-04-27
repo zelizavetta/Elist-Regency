@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import UserProfile, Booking
+from .models import UserProfile, Booking, Review
 
 
 class DateTextInput(forms.DateInput):
@@ -68,3 +68,18 @@ class CustomUserCreationForm(UserCreationForm):
         if commit:
             user.save()
         return user
+
+class ReviewForm(forms.ModelForm):
+    class Meta:
+        model = Review
+        fields = ['rating', 'text']
+        widgets = {
+            'rating': forms.RadioSelect(),
+            'text':   forms.Textarea(attrs={'rows':4}),
+        }
+        labels = {
+            'rating': 'Ваша оценка',
+            'text':   'Ваш отзыв',
+        }
+
+

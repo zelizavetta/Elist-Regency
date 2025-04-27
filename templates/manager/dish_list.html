@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>Управление блюдами</h1>
+  <p><a href="{% url 'manager_dish_add' %}">Добавить новое блюдо</a></p>
+  <table>
+    <tr><th>Ресторан</th><th>Название</th><th>Цена</th><th>Фото</th><th>Действия</th></tr>
+    {% for d in dishes %}
+      <tr>
+        <td>{{ d.restaurant.get_name_display }}</td>
+        <td>{{ d.name }}</td>
+        <td>{{ d.price }} ₽</td>
+        <td>
+          {% if d.image %}
+            <img src="{{ d.image.url }}" style="height:40px;" />
+          {% endif %}
+        </td>
+        <td>
+          <a href="{% url 'manager_dish_edit' d.pk %}">Править</a> |
+          <a href="{% url 'manager_dish_delete' d.pk %}">Удалить</a>
+        </td>
+      </tr>
+    {% endfor %}
+  </table>
+  <p><a href="{% url 'manager_dashboard' %}">← Назад в панель менеджера</a></p>
+{% endblock %}

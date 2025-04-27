@@ -31,6 +31,16 @@
       </tr>
     </tbody>
   </table>
-
-  <p><a href="{% url 'manager_dashboard' %}">← Назад в панель менеджера</a></p>
+  <h2>Отзывы гостей</h2>
+  <p>Средняя оценка: {{ avg_rating|floatformat:1 }} из 5 ({{ reviews_count }} отзывов)</p>
+  <ul>
+    {% for rev in reviews %}
+      <li>
+        <strong>{{ rev.user.username }}</strong> ({{ rev.created_at|date:"Y-m-d" }}):
+        {{ rev.rating }}/5<br>
+        {{ rev.text }}
+      </li>
+    {% endfor %}
+  </ul>
+<p><a href="{% url 'manager_dashboard' %}">← Назад в панель менеджера</a></p>
 {% endblock %}

@@ -41,24 +41,26 @@ html, body {
     margin: 0;
 }
 
-.title {
+.header .title {
     font-size: 48px;
     font-family: algerian, courier;
     opacity: 100;
     color: white;
     text-align: center;
+    align-items: center;
+    justify-content: center;
 }
 
-.title a {
+.header .title a {
+    text-decoration: none;
+    color: white;
+    justify-content: center;
+}
+
+.header .title a:hover {
     text-decoration: none;
     color: white;
 }
-
-.title a:hover {
-    text-decoration: none;
-    color: white;
-}
-
 
 .menu-bar {
     z-index: 1;

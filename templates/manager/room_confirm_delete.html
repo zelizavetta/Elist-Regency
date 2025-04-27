@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>Удалить номер {{ object.number }}?</h1>
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit">Да, удалить</button>
+    <a href="{% url 'manager_room_list' %}">Отмена</a>
+  </form>
+{% endblock %}

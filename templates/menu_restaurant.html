@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+  <h2>{{ restaurant.get_name_display }}</h2>
+  <ul class="dishes">
+    {% for dish in dishes %}
+      <li>
+        <img src="{{ dish.image_url }}" alt="{{ dish.name }}" width="80">
+        <h4>{{ dish.name }} — {{ dish.price }} ₽</h4>
+        <p>{{ dish.description }}</p>
+      </li>
+    {% endfor %}
+  </ul>
+  <p><a href="{% url 'menu_restaurants' %}">← Выбрать другое заведение</a></p>
+{% endblock %}

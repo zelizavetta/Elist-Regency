@@ -2,6 +2,19 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.templatetags.static import static
+from django.conf import settings
+from django.core.files.storage import FileSystemStorage
+
+dish_static_fs = FileSystemStorage(
+    location=settings.DISH_STATIC_ROOT,
+    base_url=settings.DISH_STATIC_URL,
+)
+
+room_static_fs = FileSystemStorage(
+    location=settings.ROOM_STATIC_ROOT,
+    base_url=settings.ROOM_STATIC_URL,
+)
+
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
@@ -37,10 +50,13 @@ class Room(models.Model):
     price     = models.DecimalField("Цена за ночь",
                                     max_digits=8, decimal_places=2)
 
-    # убираем choices из ImageField — пусть всегда хранит просто путь (или совсем убираем поле)
-    image = models.ImageField("Изображение номера",
-                              upload_to='rooms/',
-                              blank=True)
+    image = models.ImageField(
+        'Фото номера',
+        storage=room_static_fs,
+        upload_to='',       
+        blank=True,
+        null=True
+    )
     
 
     class Meta:
@@ -55,22 +71,24 @@ class Room(models.Model):
     def description(self):
         return dict(self.ROOM_DESCRIPTION_CHOICES).get(self.room_type, "")
 
-    # статическая мапа тип→путь
-    IMAGE_MAP = {
-        COMFORT:      'img/room2.jpg',
-        COMFORT_PLUS: 'img/room3.jpg',
-        APARTMENT:    'img/room7.jpg',
-    }
+    # # статическая мапа тип→путь
+    # IMAGE_MAP = {
+    #     COMFORT:      'img/room2.jpg',
+    #     COMFORT_PLUS: 'img/room3.jpg',
+    #     APARTMENT:    'img/room7.jpg',
+    # }
 
     @property
     def image_url(self):
         """
-        Возвращаем статический путь в зависимости от room_type.
-        Для использования в шаблоне как {{ room.image_url }}.
+        Возвращает полный URL к картинке.
+        Если self.image пусто — возвращает статический URL дефолтной картинки.
         """
-        # static() оборачивает относительный путь в URL из STATIC_URL
-        return static(self.IMAGE_MAP.get(self.room_type, 'img/default.jpg'))
-
+        if self.image and hasattr(self.image, 'url'):
+            # .url уже учитывает storage.base_url + имя файла
+            return self.image.url
+        # подставляем свой дефолт из STATIC
+        return static('img/rooms/default_room.jpg')
 
 
 class Booking(models.Model):
@@ -151,7 +169,7 @@ class Restaurant(models.Model):
         (BAR,        'Описание бара'),
     ]
 
-    name = models.CharField('Название', max_length=100, choices=NAME_CHOICES)
+    name = models.CharField('Название ресторана', max_length=100, choices=NAME_CHOICES)
 
     @property
     def description(self):
@@ -176,21 +194,41 @@ class Restaurant(models.Model):
 
     def __str__(self):
         return self.get_name_display()
+    
+    def __repr__(self):
+        return self.get_name_display()
 
     
-
 class Dish(models.Model):
-    restaurant  = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name='dishes')
+    restaurant  = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name='dishes', verbose_name="Ресторан")
     name        = models.CharField('Блюдо', max_length=100)
     description = models.TextField('Описание', blank=True)
     price       = models.DecimalField('Цена', max_digits=8, decimal_places=2)
+    image = models.ImageField(
+        'Фото блюда',
+        storage=dish_static_fs,
+        upload_to='',       
+        blank=True,
+        null=True
+    )
+
+    @property
+    def image_url(self):
+        if self.image and hasattr(self.image, 'url'):
+            return self.image.url
+        return static('img/dishes/default_dish.jpg')
+
 
     def __str__(self):
         return self.name
 
+
 class Cart(models.Model):
     user       = models.OneToOneField(User, on_delete=models.CASCADE, related_name='cart')
     created_at = models.DateTimeField(auto_now_add=True)
+    order_date = models.DateField("Дата доставки", null=True, blank=True)
+    order_time = models.TimeField("Время доставки", null=True, blank=True)
+
 
     def __str__(self):
         return f'Корзина {self.user.username}'
@@ -202,12 +240,36 @@ class CartItem(models.Model):
     cart     = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='items')
     dish     = models.ForeignKey(Dish, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
+    booking = models.ForeignKey(
+        Booking,
+        on_delete=models.CASCADE,
+        related_name='cart_items',
+        null=True,    
+        blank=True    
+    )
+    order_date = models.DateField("Дата доставки", null=True, blank=True)
+    order_time = models.TimeField("Время доставки", null=True, blank=True)
 
     class Meta:
-        unique_together = ('cart', 'dish')
+        unique_together = ('cart', 'dish', 'booking')
 
     def __str__(self):
         return f'{self.dish.name} × {self.quantity}'
 
     def total_price(self):
         return self.dish.price * self.quantity
+
+class Review(models.Model):
+    STAR_CHOICES = [(i, f"{i} зв{'езда' if i==1 else 'ез'}") for i in range(1,6)]
+    user       = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reviews')
+    rating     = models.IntegerField("Оценка", choices=STAR_CHOICES)
+    text       = models.TextField("Текст отзыва")
+    created_at = models.DateTimeField("Дата создания", auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Отзыв"
+        verbose_name_plural = "Отзывы"
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.user.username}: {self.rating}/5"

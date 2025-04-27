@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'mainapp.apps.MainappConfig',
+    'manager',
 ]
 
 MIDDLEWARE = [
@@ -133,7 +134,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
@@ -142,3 +143,11 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+DISH_STATIC_ROOT = os.path.join(BASE_DIR, 'static/img', 'dishes')
+DISH_STATIC_URL  = STATIC_URL + 'img/' + 'dishes/'
+
+
+ROOM_STATIC_SUBFOLDER = 'img/rooms'
+ROOM_STATIC_ROOT      = BASE_DIR / 'static' / ROOM_STATIC_SUBFOLDER
+ROOM_STATIC_URL       = STATIC_URL + ROOM_STATIC_SUBFOLDER + '/' 

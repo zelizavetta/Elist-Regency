@@ -1,53 +1,79 @@
 {% extends "base.html" %}
+{% load static %}
+
+{% block head %}
+  <link rel="stylesheet" href="{% static 'css/dashboard.css'%}">
+{% endblock %}
+
 {% block content %}
-  <h1>Панель менеджера</h1>
+{% include 'header.html' %}
+<div class="dashboard">
+  <div class="title">
+    <p style="color: black; margin: 0; font-family: sans-serif; font-size: 40px; font-weight: 600;">Панель менеджера</p>
+    <form method="post" action="{% url 'logout' %}">
+      {% csrf_token %}
+      <button type="submit" class="logout-bttn">
+        <img src="{% static 'img/logout_icon.svg' %}" />
+      </button>
+    </form>
+  </div>
+  <hr class="divider" />
+  <div class="main-dashboard">
+    <div class="bookings">
+    <h3>Все брони</h3>
+    <form method="get" class="filter-form" style="margin-bottom:16px;">
+      <label>
+        Год:
+        <select name="year" style="border: #EEAD77 1px solid; border-radius: 10px; padding: 2px; height: 30px;">
+          <option value="">Все</option>
+          {% for y in years %}
+            <option value="{{ y }}" {% if sel_year|stringformat:"s" == y|stringformat:"s" %}selected{% endif %}>
+              {{ y }}
+            </option>
+          {% endfor %}
+        </select>
+      </label>
+      <label style="margin-left:1em;">
+        Месяц:
+        <select name="month" style="border: #EEAD77 1px solid; border-radius: 10px; padding: 2px; height: 30px;">
+          <option value="">Все</option>
+          {% for num,name in months %}
+            <option value="{{ num }}" {% if sel_month|stringformat:"s" == num|stringformat:"s" %}selected{% endif %}>
+              {{ name }}
+            </option>
+          {% endfor %}
+        </select>
+      </label>
+      <button type="submit" style="margin-left:1em; border-radius: 10px; background-color:#EEAD77; color: white; border: black 1px solid; width: 120px; height: 30px;">Показать</button>
+    </form>
 
-  <h2>Все номера</h2>
-  <ul>
-    {% for r in rooms %}
-      <li style="margin-bottom:16px;">
-        <strong>Номер:</strong> {{ r.number }} —
-        <strong>Тип:</strong> {{ r.get_room_type_display }} —
-        <strong>Цена:</strong>
-        <!-- Inline-форма для изменения цены -->
-        <form method="post"
-              action="{% url 'manager_edit_room' r.pk %}"
-              style="display:inline">
-          {% csrf_token %}
-          <input type="text"
-                 name="price"
-                 value="{{ r.price }}"
-                 style="width:80px; text-align:right;">
-          <button type="submit">Сохранить</button>
-        </form>
-        ₽/ночь
-      </li>
-    {% endfor %}
-  </ul>
-
-  <h2>Все брони</h2>
-  <ul>
-    {% for b in bookings %}
-      <li>
-        {{ b.user.username }} забронировал(а) {{ b.room.number }}
-        с {{ b.check_in }} по {{ b.check_out }}
-      </li>
-    {% endfor %}
-  </ul>
-
-  <h2>Профили пользователей</h2>
-  <ul>
-    {% for p in profiles %}
-      <li>{{ p.user.username }} — {{ p.name }} — {{ p.phone }} — {{ p.email }}</li>
-    {% endfor %}
-  </ul>
-  <form method="post" action="{% url 'logout' %}">
-    {% csrf_token %}
-    <button type="submit">Выйти</button>
-</form>
-<a href="{% url 'manager_stats' %}">
-  <button>
-    Посмотреть статистику
-  </button>
-</a>
+    <ul>
+      {% for b in bookings %}
+        <li>
+          {{ b.user.username }} — {{ b.room.number }} —
+          {{ b.check_in }} / {{ b.check_out }} — {{ b.user.email }}
+        </li>
+      {% empty %}
+        <li>Брони не найдены.</li>
+      {% endfor %}
+    </ul>
+    </div>
+    <div class="users">
+      <h3>Профили пользователей</h3>
+      <ul>
+        {% for p in profiles %}
+          <li>{{ p.user.username }} — {{ p.name }} — {{ p.phone }} — {{ p.email }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <hr class="divider" />
+  <div class="manage-actions">
+    <a href="{% url 'manager_room_list' %}">Управления номерами</a>
+    <a href="{% url 'manager_dish_list' %}">Управление блюдами</a>
+    <a href="{% url 'manager_stats' %}">
+      Посмотреть статистику
+    </a>
+  </div>
+</div>
 {% endblock %}

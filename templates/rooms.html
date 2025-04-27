@@ -2,59 +2,34 @@
 {% load static %}
 
 {% block head %}
-    <link rel="stylesheet" href="{% static 'css/rooms.css'%}">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+  <link rel="stylesheet" href="{% static 'css/rooms.css'%}">
 {% endblock %}
+
 {% block content %}
-{% include "header.html" %}
-    <div style="margin-top: 72px; padding: 40px;">
-        <p style="font-size: 24px; font-weight: bold;">
-            Номера
-        </p>
-        <div class="rooms">
-            <div class="room-block">
-                <img src="{% static 'img/room2.jpg'%}"/>
-                <div class="room-info">
-                    <p class="room-title">
-                        Комфорт
-                    </p>
-                    <p class="room-description">
-                        Уютный номер стандартного класса, оборудованный всеми необходимыми удобствами: современная мебель, телевизор, бесплатный Wi-Fi, мини-бар и кондиционер. Подходит для комфортного проживания по доступной цене.
-                    </p>
-                    <button class="booking-bttn">
-                        Забронировать
-                    </button>
-                </div>
-            </div>
-            <div class="room-block">
-                <img src="{% static 'img/room3.jpg'%}" />
+  {% include "header.html" %}
+  <div style="margin-top: 72px; padding: 40px;">
+    <p style="font-size: 24px; font-weight: bold;">Номера</p>
+    <div class="rooms">
+      {% for room in rooms %}
+        <div class="room-block">
+          <img src="{{ room.image_url }}" alt="Номер {{ room.number }}"/>
+          <div class="room-info">
+            <div class="room-info-text">
                 <p class="room-title">
-                    Комфорт+
+                  {{ room.get_room_type_display }}
                 </p>
                 <p class="room-description">
-                    Улучшенная версия номера «Комфорт» с дополнительными деталями: более стильный интерьер, расширенное пространство, улучшенные условия в ванной комнате и, возможно, дополнительные сервисы (например, круглосуточное обслуживание или мини-кухня). Идеален для гостей, ценящих немного больше уюта и удобств.
+                  {{ room.description }}
                 </p>
-                <button class="booking-bttn">
-                    Забронировать
-                </button>
             </div>
-            <div class="room-block">
-                <img src="{% static 'img/room7.jpg'%}"/>
-                <p class="room-title">
-                    Апартаменты
-                </p>
-                <p class="room-description">
-                    Просторные и функциональные номера с отдельной
-                    <br>гостиной и кухонной зоной, что позволяет
-                    <br>гостям чувствовать себя как дома.
-                    <br>Апартаменты подходят для длительного проживания,
-                    <br>семей или гостей, нуждающихся в дополнительном
-                    <br>пространстве и приватности.
-                </p>
-                <button class="booking-bttn">
-                    Забронировать
-                </button>
-            </div>
+            <a href="{% url 'room_detail' room.pk %}">
+              <button class="booking-bttn">Забронировать</button>
+            </a>
+          </div>
+        </div>
+      {% empty %}
+        <p>Пока нет доступных номеров.</p>
+      {% endfor %}
     </div>
+  </div>
 {% endblock %}

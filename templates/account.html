@@ -9,76 +9,91 @@
 
 {% block content %}
     {% include "header.html" %}
-        <div class="account" style="display: flex; flex-direction:column; margin-top: 64px; padding: 40px;">
-            <div style="display: flex; flex-direction: row; justify-content:space-between; align-items: center;">
+    {% if messages %}
+    <ul class="messages">
+        {% for m in messages %}
+        <li class="{{ m.tags }}">{{ m }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+        <div class="account">
+            <div class="account-title">
                 <p style="font-size: 24px;">
-                    Здравствуйте, <b style="color: #EEAD77;">{{ name }}</b>
+                    Здравствуйте, <b>{{ name }}</b>
                 </p>
                 <a href="{% url 'usersettings' %}" >
-                    <img style="margin-bottom: 8px;" src="{% static 'img/settings.svg' %}" />
+                    <img src="{% static 'img/settings.svg' %}" />
                 </a>
             </div>
             {% include "booking.html" %}
-            <div style="display: flex; flex-direction: row; justify-content:space-between;">
-                <div style="display: flex; flex-direction: column;">
-                    <h2>Текущее бронирование</h2>
+            <div class="account-actions">
+                <div class="all-bookings">
+                    <p class="header-title">Текущее бронирование</p>
                     {% if current_bookings %}
                         {% for b in current_bookings %}
-                        <div style="display:flex; gap:16px; margin-left:32px; margin-bottom:32px;">
-                            <img src="{{ b.room.image_url }}"
-                                style="width:200px; height:140px; border:#EEAD77 2px solid; border-radius:10px; margin-top:8px;"/>
+                        <div class="booking-list">
+                            <img src="{{ b.room.image_url }}" />
                             <div class="cur-room-description">
-                            <p><b>Номер</b> {{ b.room.room_type }}</p>
-                            <p><b>Даты</b> {{ b.check_in }} – {{ b.check_out }}</p>
-                            <p><b>Гости</b> {{ b.guests }}, дети {{ b.children }}</p>
-                            <form method="post" action="{% url 'cancel_booking' b.pk %}">
-                                {% csrf_token %}
-                                <button type="submit">Отменить бронирование</button>
-                            </form>
+                                <div class="text-description">
+                                    <p><b>Номер</b> {{ b.room.room_type }}</p>
+                                    <p><b>Даты</b> {{ b.check_in }} – {{ b.check_out }}</p>
+                                    <p><b>Гости</b> {{ b.guests }}, дети {{ b.children }}</p>
+                                </div>
+                                <div class="order-service">
+                                    <a href="{% url 'restaurants' booking_pk=b.pk %}">
+                                        Заказать еду в номер
+                                      </a>
+                                    <a href="{% url 'cleaning' b.pk %}" class="cleaning-order-btn">Клининг номера</a>
+                                </div>
+                                <form method="post" action="{% url 'cancel_booking' b.pk %}">
+                                    {% csrf_token %}
+                                    <button type="submit">Отменить бронирование</button>
+                                </form>
                             </div>
                         </div>
                         {% endfor %}
                     {% else %}
                         <p>У вас нет активных броней.</p>
                     {% endif %}
-                        <h2>
+                        <p class="header-title">
                             История бронирования
-                        </h2>
+                        </p>
                         {% if past_bookings %}
                             {% for b in past_bookings %}
-                            <div style="display:flex; gap:16px; margin-left:32px; margin-bottom:32px;">
-                                <img src="{{ b.room.image_url }}"
-                                    style="width:200px; height:140px; border:#EEAD77 2px solid; border-radius:10px; margin-top:8px;"/>
+                            <div class="booking-list">
+                                <img src="{{ b.room.image_url }}" />
                                 <div class="cur-room-description">
-                                <p><b>Номер</b> {{ b.room.room_type }}</p>
-                                <p><b>Даты</b> {{ b.check_in }} – {{ b.check_out }}</p>
+                                    <p><b>Номер</b> {{ b.room.room_type }}</p>
+                                    <p><b>Даты</b> {{ b.check_in }} – {{ b.check_out }}</p>
                                 </div>
                             </div>
                             {% endfor %}
+                            <p class="header-title"><a href="{% url 'leave_review' %}">Оставить отзыв</a></p>
                         {% else %}
-                            <p>У вас пока нет завершённых броней.</p>
+                            <p style="font-size: 16px; padding-left: 32px;">У вас пока нет завершённых броней.</p>
                         {% endif %}
                 </div>
                 <div class="services">
-                    <p>
+                    <p class="header-title">
                         Услуги
                     </p>
-                    <p>
-                        Заказать услуг
-                    </p>
-                    <nav>
-                        <ul>
-                        <li><a href="{% url 'cleaning' %}" class="cleaning-order-btn">Клининг номера</a></li>
-                        <li><a href="{% url 'restaurants' %}">Еда и напитки в номер</a></li>
-                        </ul>
-                    </nav>
-                    <div>
-                        <p>
-                            Ваши услуги
+                    <div class="cur-services">
+                            {% for b in current_bookings %}
+                                {% if b.food_orders %}
+                                <div class="food-order-info">
+                                    <p><b>Еда заказана для: {{ b.room }}</b>
+                                    </p>
+                                    <ul>
+                                    {% for ci in b.food_orders %}
+                                        <li>{{ ci.dish.name }} × {{ ci.quantity }}</li>
+                                    {% endfor %}
+                                    </ul>
+                                </div>
+                                {% endif %}
+                            {% endfor %}
+                            <p>
+                            У вас еще нет заказанных клинингов номера
                         </p>
-                        <h2>Корзина</h2>
-                        <p><a href="{% url 'cart_detail' %}">Перейти в корзину</a></p>
-
                     </div>
                 </div>
             </div>
