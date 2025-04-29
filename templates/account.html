@@ -9,13 +9,6 @@
 
 {% block content %}
     {% include "header.html" %}
-    {% if messages %}
-    <ul class="messages">
-        {% for m in messages %}
-        <li class="{{ m.tags }}">{{ m }}</li>
-        {% endfor %}
-    </ul>
-    {% endif %}
         <div class="account">
             <div class="account-title">
                 <p style="font-size: 24px;">
@@ -63,8 +56,10 @@
                             <div class="booking-list">
                                 <img src="{{ b.room.image_url }}" />
                                 <div class="cur-room-description">
+                                    <div class="text-description">
                                     <p><b>Номер</b> {{ b.room.room_type }}</p>
                                     <p><b>Даты</b> {{ b.check_in }} – {{ b.check_out }}</p>
+                                    </div>
                                 </div>
                             </div>
                             {% endfor %}
@@ -88,7 +83,7 @@
                                         <li>{{ ci.dish.name }} × {{ ci.quantity }}</li>
                                     {% endfor %}
                                     </ul>
-                                </div>
+                                </div>                                
                                 {% endif %}
                             {% endfor %}
                             <p>

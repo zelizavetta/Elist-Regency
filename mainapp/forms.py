@@ -72,7 +72,7 @@ class CustomUserCreationForm(UserCreationForm):
 class ReviewForm(forms.ModelForm):
     class Meta:
         model = Review
-        fields = ['rating', 'text']
+        fields = ['booking', 'rating', 'text']
         widgets = {
             'rating': forms.RadioSelect(),
             'text':   forms.Textarea(attrs={'rows':4}),

@@ -73,38 +73,39 @@ def manager_edit_room(request, pk):
 
 @staff_member_required
 def statistics_view(request):
-    # анализируем текущий год
     year = date.today().year
 
-    # инициализируем словарь: для каждого месяца — ночей и выручки = 0
     stats = {m: {'nights': 0, 'revenue': 0} for m in range(1, 13)}
-
-    # выбираем все брони с датой заезда в этом году
     bookings = Booking.objects.filter(check_in__year=year)
 
     for b in bookings:
         month = b.check_in.month
-        # сколько ночей
         nights = (b.check_out - b.check_in).days
         stats[month]['nights']  += nights
         stats[month]['revenue'] += nights * b.room.price
 
-    # превращаем в упорядоченный список для шаблона
     stats_list = []
     for m in range(1, 13):
         stats_list.append({
-            'month':   calendar.month_name[m],       # Январь, Февраль…
+            'month':   calendar.month_name[m],
             'nights':  stats[m]['nights'],
             'revenue': stats[m]['revenue'],
         })
 
-    # общая выручка за год
     total_revenue = sum(item['revenue'] for item in stats_list)
 
+    # ДОБАВЛЯЕМ ОТЗЫВЫ И СРЕДНЮЮ ОЦЕНКУ
+    reviews = Review.objects.select_related('user').order_by('-created_at')
+    avg_rating = reviews.aggregate(Avg('rating'))['rating__avg'] or 0
+    reviews_count = reviews.count()
+
     return render(request, 'manager/statistics.html', {
-        'year':          year,
-        'stats_list':    stats_list,
-        'total_revenue': total_revenue,
+        'year':           year,
+        'stats_list':     stats_list,
+        'total_revenue':  total_revenue,
+        'reviews':        reviews,           # <--- чтобы отзывы отобразились
+        'avg_rating':     avg_rating,         # <--- средняя оценка
+        'reviews_count':  reviews_count,      # <--- кол-во отзывов
     })
 
 @method_decorator([login_required, staff_member_required], name='dispatch')

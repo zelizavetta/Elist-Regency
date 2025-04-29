@@ -287,8 +287,17 @@ def account(request):
     booked_dates = sorted(set(booked_dates))
 
     cart, _ = Cart.objects.get_or_create(user=request.user)
+
+    # Очистка корзины, если дата не сегодня
+    if cart.order_date and cart.order_date != date.today():
+        cart.items.all().delete()
+        cart.order_date = None
+        cart.order_time = None
+        cart.save()
+
     # Подгружаем все позиции вместе с рестораном
     cart_items = cart.items.select_related('dish__restaurant')
+
 
     # Составляем список уникальных ресторанов/баров
     seen = set()
@@ -449,14 +458,13 @@ def cleaning(request, pk):
 
 @login_required
 def leave_review(request):
-    # разрешаем только тем, у кого есть хотя бы одна прошлая бронь
-    has_past = Booking.objects.filter(
+    bookings = Booking.objects.filter(
         user=request.user,
         check_out__lt=date.today()
-    ).exists()
+    ).exclude(review__isnull=False)
 
-    if not has_past:
-        messages.error(request, "Оставить отзыв можно только после завершённой брони.")
+    if not bookings.exists():
+        messages.error(request, "Нет доступных броней для написания отзыва.")
         return redirect('account')
 
     if request.method == 'POST':
@@ -469,20 +477,21 @@ def leave_review(request):
             return redirect('account')
     else:
         form = ReviewForm()
+        form.fields['booking'].queryset = bookings  # <-- показываем только те брони без отзывов
 
     return render(request, 'leave_review.html', {'form': form})
+
 
 @login_required
 @require_POST
 def order_restaurant(request):
     # просто убеждаемся, что корзина не пуста и закреплена за пользователем
     cart = get_object_or_404(Cart, user=request.user)
-    print(cart)
-    if not cart.items.exists():
-        messages.error(request, "Корзина пуста.")
+    if not cart.items.exists() or not request.POST.get('order_time'):
         return redirect('cart_detail')
+    
+    cart.order_time = request.POST.get('order_time')
+    cart.order_date = date.today()
+    print(cart)
 
-    # Фактически мы уже сохраняли дату/время в CartItem при добавлении в корзину.
-    # Здесь можно отметить корзину как «заказанную», но для простоты просто редиректим.
-    messages.success(request, "Ваш заказ еды принят! Проверьте личный кабинет.")
     return redirect('account')

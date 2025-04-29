@@ -1,7 +1,14 @@
 {% extends "base.html" %}
+{% load static %}
+
 {% block content %}
-  <h2>{{ restaurant.get_name_display }} — бронь №{{ booking.id }}</h2>
-  <p>Номер {{ booking.room.number }} ({{ booking.check_in }}–{{ booking.check_out }})</p>
+  <h2>{{ restaurant.get_name_display }}</h2>
+  <div style="display: flex; flex-direction: row; gap: 64px;">
+    <p>Номер {{ booking.room.number }} ({{ booking.check_in }}–{{ booking.check_out }})</p>
+    <a href="{% url 'cart_detail' %}">
+      <img src="{% static 'img/cart_icon.svg' %}" />
+    </a>
+  </div>
   <ul class="dishes">
     {% for dish in dishes %}
       <li>

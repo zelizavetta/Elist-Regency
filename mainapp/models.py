@@ -260,13 +260,15 @@ class CartItem(models.Model):
         return self.dish.price * self.quantity
 
 class Review(models.Model):
-    STAR_CHOICES = [(i, f"{i} зв{'езда' if i==1 else 'ез'}") for i in range(1,6)]
+    STAR_CHOICES = [(1, '1 звезда'), (2, "2 звезды"), (3, "3 звезды"), (4, "4 звезды"), (5, "5 звезд"),]
     user       = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reviews')
+    booking = models.ForeignKey('Booking', on_delete=models.CASCADE)  # Связь с бронью
     rating     = models.IntegerField("Оценка", choices=STAR_CHOICES)
     text       = models.TextField("Текст отзыва")
     created_at = models.DateTimeField("Дата создания", auto_now_add=True)
 
     class Meta:
+        unique_together = ('user', 'booking')
         verbose_name = "Отзыв"
         verbose_name_plural = "Отзывы"
         ordering = ['-created_at']

@@ -6,7 +6,6 @@
       {% for item in items %}
         <li>
           {{ item.dish.name }} × {{ item.quantity }} = {{ item.total_price }} ₽<br>
-          Доставка: {{ item.order_date }} в {{ item.order_time }}<br>
           Номер: {{ item.booking.room.number }}
           <form method="post" action="{% url 'cart_remove' %}" style="display:inline">
             {% csrf_token %}
@@ -20,6 +19,8 @@
 
     <form method="post" action="{% url 'order_restaurant' %}">
       {% csrf_token %}
+      <label for="order_time">Выберите время доставки на сегодня:</label>
+      <input type="time" name="order_time" id="order_time" required>
       <button type="submit">Заказать еду</button>
     </form>
   {% else %}

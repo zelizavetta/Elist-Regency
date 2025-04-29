@@ -147,3 +147,7 @@
     margin: 0;
     height: fit-content;
 }
+
+.text-description {
+    height: 150px;
+}
