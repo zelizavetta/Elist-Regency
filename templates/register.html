@@ -2,14 +2,16 @@
 {% load static %}
 
 {% block head %}
-
+<link rel="stylesheet" href="{% static 'css/register.css' %}">
 {% endblock %}
 {% block content %}
-<h1>Регистрация</h1>
-    <form method="post">
-        {% csrf_token %}
-        <input type="hidden" name="form_type" value="profile">
-        {{ profile_form.as_p }}
-        <button type="submit">Отправить</button>
-    </form>
+<div class="register-wrapper">
+  <h1>Регистрация</h1>
+  <form method="post">
+      {% csrf_token %}
+      <input type="hidden" name="form_type" value="profile">
+      {{ profile_form.as_p }}
+      <button type="submit">Отправить</button>
+  </form>
+</div>
 {% endblock %}

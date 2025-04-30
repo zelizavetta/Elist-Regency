@@ -2,22 +2,27 @@
 {% load static %}
 
 {% block head %}
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+  <link rel="stylesheet" href="{% static 'css/usersettings.css' %}">
 {% endblock %}
 
 {% block content %}
-<h1>Настройки личного кабинета</h1>
-  <form method="post">
+  {% include "header.html" %}
+
+  <div class="account-settings">
+    <h1>Настройки личного кабинета</h1>
+
+    <form method="post" class="profile-form">
       {% csrf_token %}
       <input type="hidden" name="form_type" value="profile" />
       {{ form.as_p }}
-      <button type="submit">Сохранить изменения</button>
-  </form>
-    <form method="post" action="{% url 'logout' %}">
+      <button type="submit" class="save-btn">Сохранить изменения</button>
+    </form>
+
+    <form method="post" action="{% url 'logout' %}" class="logout-form">
       {% csrf_token %}
-      <button type="submit">Выйти</button>
-  </form>
+      <button type="submit" class="logout-btn">Выйти</button>
+    </form>
+  </div>
+
+  {% include "footer.html" %}
 {% endblock %}
-<!DOCTYPE html>
-<html lang="en">

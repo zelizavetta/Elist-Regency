@@ -3,6 +3,8 @@
     flex-direction: column;
     gap: 32px;
     margin-top: 64px;
+    font-size: 32px;
+    font-weight: bold;
 }
 
 .about-text {

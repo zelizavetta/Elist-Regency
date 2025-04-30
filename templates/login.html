@@ -2,15 +2,17 @@
 {% load static %}
 
 {% block head %}
-
+<link rel="stylesheet" href="{% static 'css/login.css' %}">
 {% endblock %}
 {% block content %}
-<h1>Вход</h1>
-<form method="post">
-    {% csrf_token %}
-    <input type="hidden" name="form_type" value="profile">
-    {{ profile_form.as_p }}
-    <button type="submit">Войти</button>
-</form>
-<p>Нет аккаунта? <a href="{% url 'register' %}">Зарегистрируйтесь</a></p>
+<div class="login-wrapper">
+  <h1>Вход</h1>
+  <form method="post">
+      {% csrf_token %}
+      <input type="hidden" name="form_type" value="profile">
+      {{ profile_form.as_p }}
+      <button type="submit">Войти</button>
+  </form>
+  <p>Нет аккаунта? <a href="{% url 'register' %}">Зарегистрируйтесь</a></p>
+</div>
 {% endblock %}
