@@ -22,8 +22,6 @@
     </div>
   </div>
 
-  {% include "footer.html" %}
-
   <!-- Модальное окно -->
   <div id="lightbox" class="lightbox">
     <span class="close">&times;</span>
@@ -31,53 +29,52 @@
     <span class="nav prev" id="lightbox-prev">&#10094;</span>
     <span class="nav next" id="lightbox-next">&#10095;</span>
   </div>
-{% endblock %}
 
-{% block scripts %}
   <script>
-      const lightbox = document.getElementById("lightbox");
-    const lightboxImg = document.getElementById("lightbox-img");
-    const closeBtn = document.querySelector(".close");
-    const nextBtn = document.getElementById("lightbox-next");
-    const prevBtn = document.getElementById("lightbox-prev");
+    const lightbox = document.getElementById("lightbox");
+  const lightboxImg = document.getElementById("lightbox-img");
+  const closeBtn = document.querySelector(".close");
+  const nextBtn = document.getElementById("lightbox-next");
+  const prevBtn = document.getElementById("lightbox-prev");
 
-    const images = Array.from(document.querySelectorAll(".gallery-grid img"));
-    let currentIndex = 0;
+  const images = Array.from(document.querySelectorAll(".gallery-grid img"));
+  let currentIndex = 0;
 
-    function showImage(index) {
-      currentIndex = index;
-      lightboxImg.src = images[index].src;
-      lightbox.style.display = "flex";
-    }
+  function showImage(index) {
+    currentIndex = index;
+    lightboxImg.src = images[index].src;
+    lightbox.style.display = "flex";
+  }
 
-    images.forEach((img, i) => {
-      img.addEventListener("click", () => showImage(i));
-    });
+  images.forEach((img, i) => {
+    img.addEventListener("click", () => showImage(i));
+  });
 
-    closeBtn.addEventListener("click", () => {
+  closeBtn.addEventListener("click", () => {
+    lightbox.style.display = "none";
+  });
+
+  nextBtn.addEventListener("click", () => {
+    currentIndex = (currentIndex + 1) % images.length;
+    lightboxImg.src = images[currentIndex].src;
+  });
+
+  prevBtn.addEventListener("click", () => {
+    currentIndex = (currentIndex - 1 + images.length) % images.length;
+    lightboxImg.src = images[currentIndex].src;
+  });
+
+  lightbox.addEventListener("click", (e) => {
+    if (e.target === lightbox) {
       lightbox.style.display = "none";
-    });
+    }
+  });
 
-    nextBtn.addEventListener("click", () => {
-      currentIndex = (currentIndex + 1) % images.length;
-      lightboxImg.src = images[currentIndex].src;
-    });
-
-    prevBtn.addEventListener("click", () => {
-      currentIndex = (currentIndex - 1 + images.length) % images.length;
-      lightboxImg.src = images[currentIndex].src;
-    });
-
-    lightbox.addEventListener("click", (e) => {
-      if (e.target === lightbox) {
-        lightbox.style.display = "none";
-      }
-    });
-
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") lightbox.style.display = "none";
-      if (e.key === "ArrowRight") nextBtn.click();
-      if (e.key === "ArrowLeft") prevBtn.click();
-    });
-  </script>
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") lightbox.style.display = "none";
+    if (e.key === "ArrowRight") nextBtn.click();
+    if (e.key === "ArrowLeft") prevBtn.click();
+  });
+</script>
 {% endblock %}
+

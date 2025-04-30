@@ -48,13 +48,14 @@
 .guest-display {
     border-radius: 4px;
     border: 0;
-    height: 32px;
+    height: 44px;
     width: 200px;
     background-color: white;
     cursor: pointer;
     user-select: none;
     padding: 8px;
     align-items: center;
+    
 }
 
 /* Стили для всплывающего окна */
