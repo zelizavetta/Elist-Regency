@@ -1,69 +1,88 @@
 /* ===== Стиль страницы ===== */
 .gallery-wrapper {
-    padding-top: 100px; /* чтобы не залезало под фиксированный хедер */
-  }
-  
-  .gallery-title {
-    text-align: center;
-    font-size: 36px;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 40px;
-    font-family: 'Playfair Display', serif;
-  }
-  
-  /* ===== Сетка изображений ===== */
-  .gallery-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
-    padding: 0 20px 40px;
-  }
-  
-  .gallery-grid img {
-    width: 300px;
-    height: auto;
-    border-radius: 0;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    cursor: pointer;
-    transition: transform 0.3s, box-shadow 0.3s;
-  }
-  
-  .gallery-grid img:hover {
-    transform: scale(1.05);
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
-  }
-  
-  /* ===== Лайтбокс (увеличение фото) ===== */
-  .lightbox {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.9);
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .lightbox-content {
-    max-width: 130%;
-    max-height: 80%;
-    border-radius: 0;
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
-  }
-  
-  .close {
-    position: absolute;
-    top: 30px;
-    right: 40px;
-    color: white;
-    font-size: 40px;
-    font-weight: bold;
-    cursor: pointer;
-    z-index: 1001;
-  }
-  
+  padding-top: 100px; /* чтобы не залезало под фиксированный хедер */
+}
+
+.gallery-title {
+  text-align: center;
+  font-size: 36px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 40px;
+  font-family: 'Playfair Display', serif;
+}
+
+/* ===== Сетка изображений ===== */
+.gallery-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  padding: 0 20px 40px;
+}
+
+.gallery-grid img {
+  width: 300px;
+  height: auto;
+  border-radius: 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.gallery-grid img:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+}
+
+/* ===== Лайтбокс (увеличение фото) ===== */
+.lightbox {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.9);
+  justify-content: center;
+  align-items: center;
+}
+
+.lightbox-content {
+  max-width: 130%;
+  max-height: 80%;
+  border-radius: 0;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+}
+
+.close {
+  position: absolute;
+  top: 30px;
+  right: 40px;
+  color: white;
+  font-size: 40px;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 1001;
+}
+
+.nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 40px;
+  color: white;
+  cursor: pointer;
+  padding: 10px;
+  z-index: 1001;
+  user-select: none;
+}
+
+.nav.prev {
+  left: 10px;
+}
+
+.nav.next {
+  right: 10px;
+}

@@ -13,9 +13,11 @@ html, body {
     align-items: center;   
     height: 56px;
     width: 100%;
-    justify-content: space-between;
     background-color: black;
+    justify-content: space-between;
     z-index: 3000;
+    font-size: 16px;
+    flex-wrap: wrap;
 }
 
 .messengers {

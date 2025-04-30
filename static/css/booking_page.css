@@ -1,6 +1,13 @@
 .booking-form {
     width: 100%;
-    height: 80px;
+    background-color: #EEAD77;
+    display: flex;
+    flex-wrap: wrap;                /* ✅ разрешаем перенос строк */
+    align-items: flex-start;        /* ✅ выравнивание по верху */
+    gap: 24px;
+    padding: 16px 32px;             /* ✅ создаём пространство */
+    border-radius: 4px;
+    font-size: 18px;
     background-color: #EEAD77;
     display: flex;
     flex-direction: row;
@@ -8,6 +15,7 @@
     align-items: center;
     gap: 0;
     border-radius: 4px;
+    font-size: 18px;
 }
 
 .booking-group-in {
@@ -32,13 +40,16 @@
 
 .guest-field {
     margin-left: 32px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .guest-display {
     border-radius: 4px;
     border: 0;
     height: 32px;
-    width: 160px;
+    width: 200px;
     background-color: white;
     cursor: pointer;
     user-select: none;
