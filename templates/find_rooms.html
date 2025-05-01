@@ -8,48 +8,26 @@
 {% block content %}
 {% include "header.html" %}
 <div style="margin-top: 64px; padding: 40px;">
-  <h1 style="margin-bottom: 16px;">Свободные номера с {{ check_in }} по {{ check_out }}</h1>
-    {% if rooms %}
-      <ul>
-      {% for room in rooms %}
-        <li style="list-style: none;">
-          <div class="room-block" style="display: flex; flex-direction: row;">
-            <img src="{{ room.image_url }}" style="width:500px; height:440px; border:#EEAD77 2px solid; border-radius:10px; margin-top:8px;"/>
-            <div class="room-info" style="display: flex; flex-direction: column; margin-top: 16px; margin-left: 16px;">
-              <h2>
-                {{ room.get_room_type_display }}
-              </h2>
-              <p style="font-size: 14px;">
-                {{ room.description }}
-              </p>
-              <p>
-                <b>
-                  {{ room.price }} ₽/ночь
-                </b>
-              </p>
-           
-          
-          <form method="post" action="{% url 'book_room' %}" style="display:inline">
-            {% csrf_token %}
-            <input type="hidden" name="room_id" value="{{ room.id }}">
-            <input type="hidden" name="check_in"  value="{{ check_in }}">
-            <input type="hidden" name="check_out" value="{{ check_out }}">
-            <input type="hidden" name="guests"     value="{{ request.POST.guests }}">
-            <input type="hidden" name="children"   value="{{ request.POST.children }}">
-            <!-- если нужно, передайте guests/children -->
-            <button type="submit" style="width: 250px; height: 40px; background-color:#EEAD77; color: white; font-size: 16px; border: 0; border-radius: 10px; font-weight: 600;">Забронировать</button>
-          </form>
-        </div>
-        </div>
-        </li>
-      {% endfor %}
-      </ul>
-    {% else %}
-      <p>Нет свободных номеров на эти даты.</p>
-    {% endif %}
-    <p style="margin-top: 64px; font-size: 16px;"><a href="{% url 'home' %}">
-      <img src="{% static 'img/back_icon.svg' %}"/>
-      Назад
-    </a></p>
-    {% endblock %}
+  
+  <h1>Свободные номера с {{ check_in }} по {{ check_out }}</h1>
+
+  {# find_rooms.html #}
+<ul>
+  {% for room in rooms %}
+    <li>
+      Номер {{ room.number }} ({{ room.get_room_type_display }}) — {{ room.price }} ₽/ночь
+      <form method="post" action="{% url 'book_room' %}">
+        {% csrf_token %}
+        <input type="hidden" name="room_id"   value="{{ room.pk }}">
+        <input type="hidden" name="check_in"  value="{{ check_in|date:'Y-m-d' }}">
+        <input type="hidden" name="check_out" value="{{ check_out|date:'Y-m-d' }}">
+        <input type="hidden" name="guests"    value="{{ guests }}">
+        <input type="hidden" name="children"  value="{{ children }}">
+        <button type="submit">Забронировать</button>
+      </form>
+    </li>
+  {% endfor %}
+</ul>
+
+{% endblock %}
 </div>

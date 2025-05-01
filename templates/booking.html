@@ -13,14 +13,18 @@
     <input type="hidden" name="guests"   id="id_guests"   value="{{ booking_form.guests.value|default:'1' }}">
     <input type="hidden" name="children" id="id_children" value="{{ booking_form.children.value|default:'0' }}">
 
+    {{ booking_form.non_field_errors }}
+
     <div class="booking-group-in">
-      <label for="id_check_in">{{ booking_form.check_in.label }}</label>
+      {{ booking_form.check_in.label_tag }}
       {{ booking_form.check_in }}
+      {{ booking_form.check_in.errors }}
     </div>
 
     <div class="booking-group-out">
-      <label for="id_check_out">{{ booking_form.check_out.label }}</label>
+      {{ booking_form.check_out.label_tag }}
       {{ booking_form.check_out }}
+      {{ booking_form.check_out.errors }}
     </div>
 
     <div class="guest-field">
@@ -57,24 +61,16 @@
   <script src="{% static 'js/booking.js' %}"></script>
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <script>
-    // Инициализация flatpickr
-    const fp2 = flatpickr("#id_check_out", {
+    // Навешиваем flatpickr на оба поля
+    flatpickr(".flatpickr", {
       dateFormat: "Y-m-d",
       minDate: "today",
-      disableMobile: true
-    });
-
-    flatpickr("#id_check_in", {
-      dateFormat: "Y-m-d",
-      minDate: "today",
-      disableMobile: true,
-      onChange(selected) {
-        if (!selected.length) return;
-        const next = new Date(selected[0].getTime() + 86400000);
-        fp2.set("minDate", next);
-        if (fp2.input.value) {
-          const od = fp2.parseDate(fp2.input.value, "Y-m-d");
-          if (od < next) fp2.clear();
+      //disableMobile: true, // если убрать — на мобилках будет нативный picker, он отдаёт ISO
+      onChange(selectedDates, dateStr, instance) {
+        if (instance.input.id === 'id_check_in' && selectedDates.length) {
+          const nextDay = new Date(selectedDates[0].getTime() + 86400000);
+          document.querySelector("#id_check_out")
+                  ._flatpickr.set('minDate', nextDay);
         }
       }
     });

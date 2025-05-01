@@ -12,6 +12,7 @@ from django.views.decorators.http import require_POST
 from django.http import HttpResponseRedirect
 from datetime import date
 from django.contrib import messages
+from datetime import datetime, timedelta
 
 
 def index(request):
@@ -57,61 +58,81 @@ def find_rooms(request):
     if request.method != 'POST':
         return redirect('home')
 
-    form = BookingForm(request.POST)
-    if not form.is_valid():
-        return render(request, 'booking.html', {'booking_form': form})
+    # 1) Разбираем POST-данные
+    try:
+        ci_str  = request.POST['check_in']   # "2025-05-02"
+        co_str  = request.POST['check_out']
+        guests  = int(request.POST.get('guests',  '1'))
+        children= int(request.POST.get('children','0'))
 
-    check_in  = form.cleaned_data['check_in']
-    check_out = form.cleaned_data['check_out']
+        check_in  = datetime.strptime(ci_str, '%Y-%m-%d').date()
+        check_out = datetime.strptime(co_str, '%Y-%m-%d').date()
+    except (KeyError, ValueError):
+        messages.error(request,
+            "Пожалуйста, выберите корректные даты в формате ГГГГ-ММ-ДД "
+            "и целое число гостей/детей."
+        )
+        return redirect('home')
 
-    overlapping = Booking.objects.filter(
-        check_in__lt=check_out,
-        check_out__gt=check_in
+    if check_out <= check_in:
+        messages.error(request, "Дата выезда должна быть позже даты заезда.")
+        return redirect('home')
+
+    # 2) Находим номера, уже забронированные в этом диапазоне
+    occupied = Booking.objects.filter(
+        Q(check_in__lt=check_out) &
+        Q(check_out__gt=check_in)
     ).values_list('room_id', flat=True)
 
-    available = Room.objects.exclude(id__in=overlapping)
+    # 3) Свободные
+    free_rooms = Room.objects.exclude(id__in=occupied).order_by('price')
 
+    # 4) Уникальные по типу
     unique = []
     seen = set()
-    for room in available:
-        if room.room_type not in seen:
-            unique.append(room)
-            seen.add(room.room_type)
+    for r in free_rooms:
+        if r.room_type not in seen:
+            unique.append(r)
+            seen.add(r.room_type)
 
+    # 5) Рендерим список
     return render(request, 'find_rooms.html', {
-        'rooms': sorted(unique, key=lambda room: room.price),
-        'check_in': check_in,
-        'check_out': check_out
+        'rooms':     unique,
+        'check_in':  check_in,
+        'check_out': check_out,
+        'guests':    guests,
+        'children':  children,
     })
+
 
 @login_required
 def book_room(request):
     if request.method != 'POST':
         return redirect('home')
 
-    room = get_object_or_404(Room, pk=request.POST.get('room_id'))
+    # Забираем из POST
+    room   = get_object_or_404(Room, pk=request.POST['room_id'])
+    ci     = datetime.strptime(request.POST['check_in'], '%Y-%m-%d').date()
+    co     = datetime.strptime(request.POST['check_out'], '%Y-%m-%d').date()
+    guests = int(request.POST.get('guests', '1'))
+    children = int(request.POST.get('children', '0'))
 
-    form = BookingForm(request.POST)
-    if not form.is_valid():
-        return redirect('find_rooms')
-
-    booking = form.save(commit=False)
-    booking.user = request.user
-    booking.room = room
-    booking.save()
-
-    # Надёжно создаём даты брони, пропуская уже существующие
-    d = booking.check_in
-    while d <= booking.check_out:
-        RoomBookedDate.objects.get_or_create(
-            room=room,
-            date=d,
-            defaults={'booking': booking}
-        )
+    # Сохраняем бронь
+    booking = Booking.objects.create(
+        user      = request.user,
+        room      = room,
+        check_in  = ci,
+        check_out = co,
+        guests    = guests,
+        children  = children,
+    )
+    # Записываем занятые даты
+    d = ci
+    while d <= co:
+        RoomBookedDate.objects.get_or_create(room=room, date=d, booking=booking)
         d += timedelta(days=1)
 
     return redirect('account')
-
 
 def room_list(request):
     """

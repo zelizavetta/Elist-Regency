@@ -2,25 +2,54 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from .models import UserProfile, Booking, Review
+from django.forms import DateInput
 
 
-class DateTextInput(forms.DateInput):
-    input_type = 'text'   # вместо 'date'
+
+
+class DateTextInput(DateInput):
+    input_type = 'text'       # вместо native date
+    format     = '%Y-%m-%d'   # формат flatpickr
+
+    def __init__(self, attrs=None, format=None):
+        super().__init__(attrs=attrs, format=format or self.format)
 
 class BookingForm(forms.ModelForm):
+    check_in = forms.DateField(
+        widget=DateTextInput(attrs={
+            'autocomplete': 'off',
+            'class': 'flatpickr',
+            'placeholder': 'YYYY-MM-DD',
+        }),
+        input_formats=[
+            '%Y-%m-%d',  # ISO, что выдаёт flatpickr
+            '%m/%d/%Y',  # WebKit native (Chrome)
+            '%d.%m.%Y',  # локали типа RU
+        ],
+        label='Дата заезда',
+    )
+    check_out = forms.DateField(
+        widget=DateTextInput(attrs={
+            'autocomplete': 'off',
+            'class': 'flatpickr',
+            'placeholder': 'YYYY-MM-DD',
+        }),
+        input_formats=[
+            '%Y-%m-%d',
+            '%m/%d/%Y',
+            '%d.%m.%Y',
+        ],
+        label='Дата выезда',
+    )
+
     class Meta:
-        model = Booking
+        model  = Booking
         fields = ['check_in', 'check_out', 'guests', 'children']
         widgets = {
-            'check_in': DateTextInput(attrs={'class': 'custom-date-input'}),
-            'check_out': DateTextInput(attrs={'class': 'custom-date-input'}),
-            'guests': forms.HiddenInput(),
+            'guests':   forms.HiddenInput(),
             'children': forms.HiddenInput(),
         }
-        labels = {
-            'check_in': 'Дата заезда',
-            'check_out': 'Дата выезда',
-        }
+
 
 
 class ProfileForm(forms.ModelForm):
