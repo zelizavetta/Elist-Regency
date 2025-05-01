@@ -2,11 +2,16 @@
 {% load static %}
 
 {% block head %}
-
+<link rel="stylesheet" href="{% static 'css/enter.css' %}">
 {% endblock %}
 {% block content %}
+<div class="welcome-wrapper">
   <h1>Добро пожаловать!</h1>
-    {% if not user.is_authenticated %}
-      <p><a href="{% url 'login' %}">Войти</a> | <a href="{% url 'register' %}">Зарегистрироваться</a></p>
-    {% endif %}
+  {% if not user.is_authenticated %}
+    <div class="auth-links">
+      <a href="{% url 'login' %}" class="auth-button">Войти</a>
+      <a href="{% url 'register' %}" class="auth-button">Зарегистрироваться</a>
+    </div>
+  {% endif %}
+</div>
 {% endblock %}

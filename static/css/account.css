@@ -151,3 +151,10 @@
 .text-description {
     height: 150px;
 }
+
+.devider {
+    width: 1px;
+    margin: 0px 30px;
+    height: 300px;
+    background-color: black;
+}
