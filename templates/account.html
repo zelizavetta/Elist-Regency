@@ -28,7 +28,7 @@
                             <img src="{{ b.room.image_url }}" />
                             <div class="cur-room-description">
                                 <div class="text-description">
-                                    <p><b>Номер</b> {{ b.room.room_type }}</p>
+                                    <p><b>Номер</b> {{ b.room.get_room_type_display }}</p>
                                     <p><b>Даты</b> {{ b.check_in }} – {{ b.check_out }}</p>
                                     <p><b>Гости</b> {{ b.guests }}, дети {{ b.children }}</p>
                                 </div>
@@ -70,28 +70,47 @@
                 </div>
                 <div class="devider"></div>
                 <div class="services">
-                    <p class="header-title">
-                        Услуги
-                    </p>
+                    <p class="header-title">Услуги</p>
                     <div class="cur-services">
-                            {% for b in current_bookings %}
-                                {% if b.food_orders %}
-                                <div class="food-order-info">
-                                    <p><b>Еда заказана для: {{ b.room }}</b>
-                                    </p>
-                                    <ul>
-                                    {% for ci in b.food_orders %}
-                                        <li>{{ ci.dish.name }} × {{ ci.quantity }}</li>
-                                    {% endfor %}
-                                    </ul>
-                                </div>                                
-                                {% endif %}
-                            {% endfor %}
-                            <p>
-                            У вас еще нет заказанных клинингов номера
-                        </p>
+                      {% for b in current_bookings %}
+                        <div class="booking-services">
+                          <h4>Бронь №{{ b.id }}: {{ b.room }}</h4>
+                  
+                          {# Еда #}
+                          {% if b.food_orders %}
+                            <div class="food-order-info">
+                              <p><b>Еда заказана:</b></p>
+                              <ul>
+                                {% for ci in b.food_orders %}
+                                  <li>{{ ci.dish.name }} × {{ ci.quantity }}</li>
+                                {% endfor %}
+                              </ul>
+                            </div>
+                          {% endif %}
+                  
+                          {# Клининг #}
+                          {% if b.cleaning_orders.all %}
+                            <div class="cleaning-order-info">
+                              <p><b>Клининг запланирован:</b></p>
+                              <ul>
+                                {% for co in b.cleaning_orders.all %}
+                                  <li>{{ co.order_date }} в {{ co.order_time }}</li>
+                                {% endfor %}
+                              </ul>
+                            </div>
+                          {% endif %}
+                  
+                          {# Если ни еды, ни клининга нет #}
+                          {% if not b.food_orders and not b.cleaning_orders.all %}
+                            <p>Для этого бронирования пока нет ни заказа еды, ни клининга.</p>
+                          {% endif %}
+                        </div>
+                      {% empty %}
+                        <p>У вас пока нет активных бронирований.</p>
+                      {% endfor %}
                     </div>
-                </div>
+                  </div>
+                  
             </div>
         </div>
 {% endblock %}

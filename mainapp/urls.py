@@ -12,8 +12,8 @@ urlpatterns = [
     path("booking/cancel/<int:booking_id>/", views.cancel_booking, name="cancel_booking"),
 
     # Дополнительные услуги
-    path("cleaning/<int:booking_pk>/", views.cleaning, name="cleaning"),
-
+    path('cleaning/<int:booking_pk>/', views.cleaning, name='cleaning'),
+    
     path("menu_restaurants/", views.menu_restaurants, name="menu_restaurants"),
     path("menu_restaurants/<int:pk>/", views.menu_restaurant_detail, name="menu_restaurant_detail"),
     path("restaurants/<int:booking_pk>/", views.restaurants, name="restaurants"),

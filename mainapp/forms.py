@@ -3,8 +3,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from .models import UserProfile, Booking, Review
 from django.forms import DateInput
-
-
+from datetime import date
 
 
 class DateTextInput(DateInput):
@@ -112,3 +111,18 @@ class ReviewForm(forms.ModelForm):
         }
 
 
+class CleaningForm(forms.Form):
+    order_date = forms.DateField(
+        label='Дата клининга',
+        widget=forms.DateInput(
+            attrs={
+                'type': 'date',
+                'min': date.today().isoformat(),
+                'max': date.today().isoformat()
+            }
+        )
+    )
+    order_time = forms.TimeField(
+        label='Время клининга',
+        widget=forms.TimeInput(attrs={'type': 'time'})
+    )

@@ -24,7 +24,7 @@
     flex-direction: column;
 }
 
-.check-in-display input {
+.booking-group-in input {
     height: 44px;
     padding: 8px;
     width: 200px;
@@ -33,7 +33,7 @@
 
 }
 
-.check-out-display input {
+.booking-group-out input {
     height: 44px;
     padding: 8px;
     width: 200px;
@@ -74,7 +74,6 @@
     user-select: none;
     padding: 8px;
     align-items: center;
-    
 }
 
 /* Стили для всплывающего окна */

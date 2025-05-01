@@ -1,12 +1,18 @@
 {% extends "base.html" %}
+{% load static %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'css/restaurants.css' %}">
+{% endblock %}
+
 {% block content %}
   {% include "header.html" %}
   <div style="padding: 40px;">
-  <h1 style="margin-top: 64px;">Наши рестораны</h1>
+  <h1 style="margin-top: 64px; text-align:center;">Наши рестораны</h1>
   <div style="display: flex; flex-direction: row; gap: 16px;">
     {% for r in restaurants %}
       <a
-        href="{% url 'menu_restaurant_detail' r.pk %}">
+        href="{% url 'menu_restaurant_detail' r.pk %}" class="restaurant-name">
           <div style="display: flex; flex-direction: column; gap: 8px;">
             <img src="{{ r.image_url }}" style="width:360px; height:300px; border:#EEAD77 2px solid; border-radius:10px; margin-top:8px;"/>
             {{ r.get_name_display }}
@@ -14,8 +20,5 @@
         </a>
     {% endfor %}
   </div>
-  <p>
-    <a href="{% url 'home' %}">← Вернуться</a>
-  </p>
 </div>
 {% endblock %}

@@ -216,7 +216,7 @@ class Dish(models.Model):
     def image_url(self):
         if self.image and hasattr(self.image, 'url'):
             return self.image.url
-        return static('img/dishes/default_dish.jpg')
+        return static('img/dishes/default_dish.png')
 
 
     def __str__(self):
@@ -275,3 +275,22 @@ class Review(models.Model):
 
     def __str__(self):
         return f"{self.user.username}: {self.rating}/5"
+    
+class CleaningOrder(models.Model):
+    booking     = models.ForeignKey(
+        'Booking',
+        on_delete=models.CASCADE,
+        related_name='cleaning_orders',
+        verbose_name='Бронирование'
+    )
+    order_date  = models.DateField('Дата клининга')
+    order_time  = models.TimeField('Время клининга')
+    created_at  = models.DateTimeField('Создано', auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Заказ клининга'
+        verbose_name_plural = 'Заказы клининга'
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f'Клининг для брони #{self.booking.id} на {self.order_date} в {self.order_time}'

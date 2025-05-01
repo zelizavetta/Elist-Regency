@@ -1,10 +1,16 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block head %}
+<link rel="stylesheet" href="{% static 'css/restaurant.css' %}">
+{% endblock %}
+
 {% block content %}
-  <h2>{{ restaurant.get_name_display }}</h2>
+{% include 'header.html' %}
+<div class="menu-content">
+  <h2 class="menu-title" style="margin-bottom: 16px;">{{ restaurant.get_name_display }}</h2>
   <div style="display: flex; flex-direction: row; gap: 64px;">
-    <p>Номер {{ booking.room.number }} ({{ booking.check_in }}–{{ booking.check_out }})</p>
+    <h3>Номер {{ booking.room.number }} ({{ booking.check_in }}–{{ booking.check_out }})</h3>
     <a href="{% url 'cart_detail' %}">
       <img src="{% static 'img/cart_icon.svg' %}" />
     </a>
@@ -12,22 +18,27 @@
   <ul class="dishes">
     {% for dish in dishes %}
       <li>
+        <div style="display: flex; flex-direction: row; gap: 16px;">
         <img src="{{ dish.image_url }}" alt="{{ dish.name }}" width="80">
-        <h4>{{ dish.name }} — {{ dish.price }} ₽</h4>
-        <p>{{ dish.description }}</p>
-        <form method="post" action="{% url 'cart_add' %}">
-          {% csrf_token %}
-          <input type="hidden" name="dish_id"    value="{{ dish.id }}">
-          <input type="hidden" name="booking_id" value="{{ booking.pk }}">
-        
-          <label>Кол-во:
-            <input type="number" name="quantity" value="1" min="1">
-          </label>
-        
-          <button type="submit">Добавить в корзину</button>
-        </form>        
+        <div>
+          <h4>{{ dish.name }} — {{ dish.price }} ₽</h4>
+          <p>{{ dish.description }}</p>
+          <form method="post" action="{% url 'cart_add' %}">
+            {% csrf_token %}
+            <input type="hidden" name="dish_id"    value="{{ dish.id }}">
+            <input type="hidden" name="booking_id" value="{{ booking.pk }}">
+          
+            <label>Кол-во:
+              <input type="number" name="quantity" value="1" min="1" style="width:100px; border-radius: 10px; border: black 1px solid;">
+            </label>
+          
+            <button type="submit" style="border: black 1px solid; border-radius: 10px; background-color:white;">Добавить в корзину</button>
+          </form>        
+        </div>
+        </div>
       </li>
     {% endfor %}
   </ul>
+  </div>
   <p><a href="{% url 'restaurants' booking.id %}">← Выбрать другое заведение</a></p>
 {% endblock %}

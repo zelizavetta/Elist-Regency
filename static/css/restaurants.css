@@ -1,0 +1,20 @@
+.restaurant-name {
+    text-decoration: none;
+    color: black;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.restaurant-name:hover {
+    text-decoration: none;
+    color: black;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.restaurant-name::after {
+    text-decoration: none;
+    color: black;
+    cursor: pointer;
+    font-weight: 600;
+}

@@ -4,4 +4,30 @@
     object-fit: cover;
     border-radius: 8px;
   }
-  
+
+.menu-content {
+  margin-top: 80px;
+  padding: 40px;
+}
+
+.menu-title {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+ul {
+  list-style: none;
+}
+
+.dishes img {
+  width: 200px;
+  height: 200px;
+  border-radius: 10px;
+  border: #EEAD77 2px solid;
+}
+
+.dishes {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}

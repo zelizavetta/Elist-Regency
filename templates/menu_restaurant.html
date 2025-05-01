@@ -1,14 +1,27 @@
 {% extends "base.html" %}
+{% load static %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'css/restaurant.css' %}">
+{% endblock %}
+
 {% block content %}
-  <h2>{{ restaurant.get_name_display }}</h2>
-  <ul class="dishes">
-    {% for dish in dishes %}
-      <li>
-        <img src="{{ dish.image_url }}" alt="{{ dish.name }}" width="80">
-        <h4>{{ dish.name }} — {{ dish.price }} ₽</h4>
-        <p>{{ dish.description }}</p>
-      </li>
-    {% endfor %}
-  </ul>
+  {% include 'header.html' %}
+  <div class="menu-content">
+    <h2 class="menu-title">{{ restaurant.get_name_display }}</h2>
+    <ul class="dishes">
+      {% for dish in dishes %}
+        <li>
+          <div style="display: flex; flex-direction: row; gap: 16px;">
+            <img src="{{ dish.image_url }}" alt="{{ dish.name }}" width="80">
+            <div class="dish-description">
+              <h4>{{ dish.name }} — {{ dish.price }} ₽</h4>
+              <p>{{ dish.description }}</p>
+            </div>
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
   <p><a href="{% url 'menu_restaurants' %}">← Выбрать другое заведение</a></p>
 {% endblock %}

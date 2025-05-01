@@ -1,8 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
-  <div class="cleaning-wrapper">
-    <h1>Заказ успешно оформлен!</h1>
-    <p>Вы выбрали дату уборки: {{ selected_date }}</p>
-    <a href="{% url 'home' %}" class="back-home">Вернуться на главную</a>
-  </div>
+  <h1>Клининг успешно заказан</h1>
+  <p>Дата: {{ cleaning.order_date }}<br>
+     Время: {{ cleaning.order_time }}</p>
+  <p><a href="{% url 'account' %}">Вернуться в личный кабинет</a></p>
 {% endblock %}

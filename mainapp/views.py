@@ -1,9 +1,9 @@
 import time
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import BookingForm, CustomUserCreationForm, ProfileForm, ReviewForm
+from .forms import BookingForm, CustomUserCreationForm, ProfileForm, ReviewForm, CleaningForm
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, logout
-from .models import UserProfile, Booking, Room, RoomBookedDate, Restaurant, Dish, Cart, CartItem, Review
+from .models import UserProfile, Booking, Room, RoomBookedDate, Restaurant, Dish, Cart, CartItem, Review, CleaningOrder
 from django.contrib.auth.decorators import login_required
 import json
 from django.db.models import Q
@@ -470,12 +470,30 @@ def cart_remove(request):
 def gallery(request):
     return render(request, 'gallery.html')
 
-def cleaning(request, pk):
+@login_required
+def cleaning(request, booking_pk):
+    booking = get_object_or_404(Booking, pk=booking_pk, user=request.user)
+
     if request.method == 'POST':
-        selected_date = request.POST.get('date')
-        return render(request, 'cleaning_success.html', {'selected_date': selected_date})
-    
-    return render(request, 'cleaning.html')
+        form = CleaningForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            # создаём заказ
+            cleaning = CleaningOrder.objects.create(
+                booking    = booking,
+                order_date = cd['order_date'],
+                order_time = cd['order_time']
+            )
+            return render(request, 'cleaning_success.html', {
+                'cleaning': cleaning
+            })
+    else:
+        form = CleaningForm(initial={'order_date': date.today()})
+
+    return render(request, 'cleaning.html', {
+        'booking': booking,
+        'form': form
+    })
 
 @login_required
 def leave_review(request):

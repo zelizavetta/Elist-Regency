@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
+{% include 'header.html' %}
+<div style="margin-top: 80px; padding: 40px;">
   <h1>Ваша корзина</h1>
   {% if items %}
     <ul>
@@ -10,7 +12,7 @@
           <form method="post" action="{% url 'cart_remove' %}" style="display:inline">
             {% csrf_token %}
             <input type="hidden" name="item_id" value="{{ item.pk }}">
-            <button type="submit">Удалить</button>
+            <button type="submit" style="width: 100px; border: #EEAD77 1px solid; border-radius: 10px; background-color: white;">Удалить</button>
           </form>
         </li>
       {% endfor %}
@@ -21,9 +23,10 @@
       {% csrf_token %}
       <label for="order_time">Выберите время доставки на сегодня:</label>
       <input type="time" name="order_time" id="order_time" required>
-      <button type="submit">Заказать еду</button>
+      <button type="submit" style="width: 150px; border: 0; border-radius: 10px; background-color: #EEAD77; color: white;">Заказать еду</button>
     </form>
   {% else %}
     <p>Корзина пуста.</p>
   {% endif %}
+  </div>
 {% endblock %}

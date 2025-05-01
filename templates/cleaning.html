@@ -1,22 +1,10 @@
 {% extends "base.html" %}
-{% load static %}
-
-{% block head %}
-  <link rel="stylesheet" href="{% static 'css/cleaning.css' %}">
-{% endblock %}
-
 {% block content %}
-  {% include "header.html" %}
-
-  <div class="cleaning-wrapper">
-    <h1 class="cleaning-title">Заказ клининга</h1>
-
-    <form class="cleaning-form" method="post">
-      {% csrf_token %}
-      <label for="date">Выберите дату уборки:</label>
-      <input type="date" id="date" name="date" required>
-
-      <button type="submit" class="cleaning-submit">Заказать</button>
-    </form>
-  </div>
+  <h1>Заказать клининг для брони №{{ booking.id }}</h1>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Заказать клининг</button>
+    <a href="{% url 'account' %}">← Отмена</a>
+  </form>
 {% endblock %}
