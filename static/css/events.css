@@ -1,11 +1,10 @@
 .events-wrapper {
   padding-top: 100px;
-  text-align: center;
 }
 
 .events-title {
   font-size: 32px;
-  font-weight: bold;
+  font-weight: 600;
   margin-bottom: 40px;
 }
 

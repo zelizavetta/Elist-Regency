@@ -1,10 +1,13 @@
 {% extends "base.html" %}
 {% block content %}
-  <h1>Заказать клининг для брони №{{ booking.id }}</h1>
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Заказать клининг</button>
-    <a href="{% url 'account' %}">← Отмена</a>
-  </form>
+  {% include 'header.html' %}
+  <div style="margin-top: 80px; padding: 40px;">
+    <h1>Заказать клининг для брони №{{ booking.id }}</h1>
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" style="width: 150px; border: #EEAD77 1px solid; border-radius: 10px; background-color: white;">Заказать клининг</button>
+      <a href="{% url 'account' %}">← Отмена</a>
+    </form>
+  </div>
 {% endblock %}

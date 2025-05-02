@@ -89,12 +89,12 @@
                           {% endif %}
                   
                           {# Клининг #}
-                          {% if b.cleaning_orders.all %}
+                          {% if b.cleaning_today %}
                             <div class="cleaning-order-info">
-                              <p><b>Клининг запланирован:</b></p>
+                              <p><b>Клининг на сегодня для {{ b.room }}:</b></p>
                               <ul>
-                                {% for co in b.cleaning_orders.all %}
-                                  <li>{{ co.order_date }} в {{ co.order_time }}</li>
+                                {% for co in b.cleaning_today %}
+                                  <li>{{ co.order_time }}</li>
                                 {% endfor %}
                               </ul>
                             </div>

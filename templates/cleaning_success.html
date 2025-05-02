@@ -1,7 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
-  <h1>Клининг успешно заказан</h1>
-  <p>Дата: {{ cleaning.order_date }}<br>
-     Время: {{ cleaning.order_time }}</p>
-  <p><a href="{% url 'account' %}">Вернуться в личный кабинет</a></p>
+  {% include 'header.html' %}
+  <div style="margin-top: 80px; padding: 40px;">
+    <h1>Клининг успешно заказан</h1>
+    <p>Дата: {{ cleaning.order_date }}<br>
+      Время: {{ cleaning.order_time }}</p>
+      <p><a href="{% url 'account' %}">Вернуться в личный кабинет</a></p>
+    </div>
 {% endblock %}

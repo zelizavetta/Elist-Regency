@@ -346,6 +346,13 @@ def account(request):
     for b in past_list:
         b.food_orders = orders_by_booking.get(b.id, [])
 
+    for b in current_list:
+        b.cleaning_today = list(
+            b.cleaning_orders.filter(order_date=today)
+        )
+    for b in past_list:
+        b.cleaning_today = []
+
     return render(request, 'account.html', {
         'profile_form':    profile_form,
         'booking_form':    booking_form,
