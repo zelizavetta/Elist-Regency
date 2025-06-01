@@ -15,7 +15,12 @@ from .forms import DishForm, RoomForm
 
 @staff_member_required
 def manager_dashboard(request):
-    qs = Booking.objects.select_related('user','room').order_by('-created_at')
+    qs = (
+        Booking.objects
+               .select_related('user', 'room')
+               .prefetch_related('cleaning_orders', 'cart_items__dish')
+               .order_by('-created_at')
+    )
 
     years = (
         Booking.objects
@@ -24,10 +29,8 @@ def manager_dashboard(request):
                .distinct()
                .order_by('-year')
     )
-    # месяцы 1–12
-    months = [(i, calendar.month_name[i]) for i in range(1,13)]
+    months = [(i, calendar.month_name[i]) for i in range(1, 13)]
 
-    # читаем GET-параметры
     sel_year  = request.GET.get('year')
     sel_month = request.GET.get('month')
     if sel_year:
@@ -35,26 +38,26 @@ def manager_dashboard(request):
     if sel_month:
         qs = qs.filter(check_in__month=sel_month)
 
+    agg = Review.objects.aggregate(
+        avg_rating=Avg('rating'),
+        total=Count('id'),
+    )
+
     context = {
-        'rooms': Room.objects.all(),
-        'profiles': UserProfile.objects.select_related('user'),
+        'rooms':       Room.objects.all(),
+        'profiles':    UserProfile.objects.select_related('user'),
         'restaurants': Restaurant.objects.prefetch_related('dishes').all(),
         'bookings':    qs,
         'years':       years,
         'months':      months,
         'sel_year':    sel_year,
         'sel_month':   sel_month,
+        'reviews':         Review.objects.select_related('user'),
+        'avg_rating':      agg['avg_rating'] or 0,
+        'reviews_count':   agg['total'],
     }
-    agg = Review.objects.aggregate(
-        avg_rating=Avg('rating'),
-        total=Count('id'),
-    )
-    context.update({
-        'reviews': Review.objects.select_related('user'),
-        'avg_rating': agg['avg_rating'] or 0,
-        'reviews_count': agg['total'],
-    })
     return render(request, 'manager/dashboard.html', context)
+
 
 @login_required
 @staff_member_required

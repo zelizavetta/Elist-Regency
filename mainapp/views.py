@@ -537,13 +537,25 @@ def leave_review(request):
 @login_required
 @require_POST
 def order_restaurant(request):
-    # просто убеждаемся, что корзина не пуста и закреплена за пользователем
+    print(">>> order_restaurant вызвана, POST:", request.POST)
     cart = get_object_or_404(Cart, user=request.user)
     if not cart.items.exists() or not request.POST.get('order_time'):
         return redirect('cart_detail')
-    
-    cart.order_time = request.POST.get('order_time')
-    cart.order_date = date.today()
-    print(cart)
+
+    # 1) Сохраняем дату/время в самой корзине
+    order_time = request.POST.get('order_time')
+    order_date = date.today()
+    cart.order_time = order_time
+    cart.order_date = order_date
+    cart.save()
+    print(f"Сохранили в Cart: order_date={cart.order_date}, order_time={cart.order_time}")
+
+    # 2) Копируем дату/время в каждый CartItem
+    for item in cart.items.all():
+        print(f"--- до сохранения у CartItem id={item.pk}: order_date={item.order_date}, order_time={item.order_time}")
+        item.order_time = order_time
+        item.order_date = order_date
+        item.save()
+        print(f"+++ после сохранения у CartItem id={item.pk}: order_date={item.order_date}, order_time={item.order_time}")
 
     return redirect('account')
