@@ -57,7 +57,7 @@
                                 <img src="{{ b.room.image_url }}" />
                                 <div class="cur-room-description">
                                     <div class="text-description">
-                                    <p><b>Номер</b> {{ b.room.room_type }}</p>
+                                    <p><b>Номер</b> {{ b.room.get_room_type_display }}</p>
                                     <p><b>Даты</b> {{ b.check_in }} – {{ b.check_out }}</p>
                                     </div>
                                 </div>

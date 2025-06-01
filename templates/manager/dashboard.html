@@ -52,6 +52,33 @@
         <li>
           {{ b.user.username }} — {{ b.room.number }} —
           {{ b.check_in }} / {{ b.check_out }} — {{ b.user.email }}
+          {% if b.cleaning_orders.all %}
+        <div style="margin-left: 1em; color: #555;">
+          <strong>Заказы клининга:</strong>
+          <ul>
+            {% for cleaning in b.cleaning_orders.all %}
+              <li>
+                {{ cleaning.order_date }} в {{ cleaning.order_time|time:"H:i" }}
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+
+      <!-- Кастомный блок для еды -->
+      {% if b.cart_items.all %}
+        <div style="margin-left: 1em; color: #555; margin-top: 4px;">
+          <strong>Заказы еды:</strong>
+          <ul>
+            {% for item in b.cart_items.all %}
+              <li>
+                {{ item.dish.name }} × {{ item.quantity }} —
+                доставка {{ item.order_date }} в {{ item.order_time|time:"H:i" }}
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
         </li>
       {% empty %}
         <li>Брони не найдены.</li>
