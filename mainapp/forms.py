@@ -117,8 +117,9 @@ class CleaningForm(forms.Form):
         widget=forms.DateInput(
             attrs={
                 'type': 'date',
+                # Эти атрибуты будут перезаписаны в __init__
                 'min': date.today().isoformat(),
-                'max': date.today().isoformat()
+                'max': date.today().isoformat(),
             }
         )
     )
@@ -126,3 +127,26 @@ class CleaningForm(forms.Form):
         label='Время клининга',
         widget=forms.TimeInput(attrs={'type': 'time'})
     )
+
+    def __init__(self, *args, booking=None, **kwargs):
+        """
+        При создании формы обязательно передаём параметр booking=Booking(...)
+        чтобы можно было валидировать дату относительно брони и задать min/max.
+        """
+        super().__init__(*args, **kwargs)
+        self.booking = booking  # сохраняем для проверки в clean_order_date
+
+        if booking:
+            # Устанавливаем реальные границы для поля order_date
+            self.fields['order_date'].widget.attrs['min'] = booking.check_in.isoformat()
+            self.fields['order_date'].widget.attrs['max'] = booking.check_out.isoformat()
+
+    def clean_order_date(self):
+        od = self.cleaned_data.get('order_date')
+        if not self.booking:
+            return od  # без booking не проверяем
+
+        # Проверяем, что дата клининга внутри периода проживания
+        if od < self.booking.check_in or od > self.booking.check_out:
+            raise forms.ValidationError("Пожалуйста, выберите дату клининга в пределах проживания (между датой заезда и датой выезда).")
+        return od

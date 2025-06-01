@@ -479,10 +479,12 @@ def gallery(request):
 
 @login_required
 def cleaning(request, booking_pk):
+    # Берём бронь, при этом проверяем, что текущий пользователь — владелец
     booking = get_object_or_404(Booking, pk=booking_pk, user=request.user)
 
     if request.method == 'POST':
-        form = CleaningForm(request.POST)
+        # Передаём request.POST и сам booking
+        form = CleaningForm(request.POST, booking=booking)
         if form.is_valid():
             cd = form.cleaned_data
             # создаём заказ
@@ -495,7 +497,11 @@ def cleaning(request, booking_pk):
                 'cleaning': cleaning
             })
     else:
-        form = CleaningForm(initial={'order_date': date.today()})
+        # При GET хотим проставить initial['order_date'] = booking.check_in
+        form = CleaningForm(
+            booking=booking,
+            initial={'order_date': booking.check_in}
+        )
 
     return render(request, 'cleaning.html', {
         'booking': booking,
